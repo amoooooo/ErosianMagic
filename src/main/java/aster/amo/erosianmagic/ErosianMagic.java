@@ -1,5 +1,6 @@
 package aster.amo.erosianmagic;
 
+import aster.amo.erosianmagic.client.ErosianMagicClient;
 import aster.amo.erosianmagic.registry.MobEffectRegistry;
 import aster.amo.erosianmagic.witch.eidolon.BookRegistry;
 import aster.amo.erosianmagic.witch.eidolon.ChantRegistry;
@@ -42,19 +43,7 @@ public class ErosianMagic {
         IEventBus modEventBus = FMLJavaModLoadingContext.get().getModEventBus();
         ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, Config.SPEC);
         ChantRegistry.init();
-        SpellRegistry.init();
+        SpellRegistry.init(modEventBus);
         MobEffectRegistry.MOB_EFFECT_DEFERRED_REGISTER.register(modEventBus);
-    }
-
-    @Mod.EventBusSubscriber(modid = MODID, bus = Mod.EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
-    public static class ClientModEvents {
-
-        @SubscribeEvent
-        public static void onClientSetup(FMLClientSetupEvent event)
-        {
-            event.enqueueWork(() -> {
-                BookRegistry.init();
-            });
-        }
     }
 }

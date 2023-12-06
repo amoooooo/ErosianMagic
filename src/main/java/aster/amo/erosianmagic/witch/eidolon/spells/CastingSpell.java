@@ -40,15 +40,13 @@ public class CastingSpell extends StaticSpell {
         if(spell != null) {
             if(!level.isClientSide) {
                 int spellLevel = getLevel(level, player, 1, this.spell.get());
-                player.sendSystemMessage(Component.literal("Spell level: " + spellLevel + ", Devotion: " + getDevotion(level, player)));
                 this.spell.get().attemptInitiateCast(player.getItemInHand(InteractionHand.MAIN_HAND), spellLevel, level, (ServerPlayer) player, CastSource.SCROLL, false);
                 level.getCapability(IReputation.INSTANCE, (Direction)null).ifPresent((rep) -> {
                     rep.pray(player, this.getRegistryName(), level.getGameTime());
                     rep.addReputation(player, this.deity.getId(), 0.1 + 0.25 * spellLevel);
                 });
                 player.getCapability(ISoul.INSTANCE, (Direction)null).ifPresent((soul) -> {
-                    ((ServerPlayer) player).sendSystemMessage(Component.literal("Mana: " + soul.getMagic() + "/" + soul.getMaxMagic()));
-                    soul.takeMagic((float) (1.0f/spell.get().getMaxLevel()) * 10.0f);
+                    soul.takeMagic((float) (1.0f/spell.get().getMaxLevel()) * 10.0f * signs().length);
                     Networking.sendTo((ServerPlayer) player, new SoulUpdatePacket(player));
                 });
             }
