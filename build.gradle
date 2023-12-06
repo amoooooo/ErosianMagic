@@ -138,6 +138,27 @@ repositories {
     // flatDir {
     //     dir 'libs'
     // }
+    maven {
+        url "https://cursemaven.com"
+        content {
+            includeGroup "curse.maven"
+        }
+    }
+    maven {
+        name = "Iron's Maven - Release"
+        url = "https://code.redspace.io/releases"
+    }
+
+    maven {
+        name = "Iron's Maven - Snapshots"
+        url = "https://code.redspace.io/snapshots"
+    }
+
+    maven { url = "https://maven.enginehub.org/repo/" }
+    maven { url = "https://dl.cloudsmith.io/public/geckolib3/geckolib/maven/" }
+    maven { url = "https://maven.theillusivec4.top" }
+    maven { url = "https://maven.blamejared.com" }
+    maven { url = "https://maven.kosmx.dev/" }
 }
 
 dependencies {
@@ -158,7 +179,40 @@ dependencies {
     // This maps to ./libs/coolmod-${mc_version}-${coolmod_version}.jar
     // The group id is ignored when searching -- in this case, it is "blank"
     // implementation fg.deobf("blank:coolmod-${mc_version}:${coolmod_version}")
+    implementation fg.deobf("curse.maven:eidolon-repraised-870250:4928824")
+    implementation fg.deobf("curse.maven:curios-309927:4913335")
+    // IRONS SPELLS N SPELLBOOKS **********************************************************************************
+    compileOnly fg.deobf("io.redspace.ironsspellbooks:irons_spellbooks:${irons_spells_version}:api")
+    runtimeOnly fg.deobf("io.redspace.ironsspellbooks:irons_spellbooks:${irons_spells_version}")
 
+    // GECKOLIB ***************************************************************************************************
+    runtimeOnly fg.deobf("software.bernie.geckolib:geckolib-forge-${geckolib_version}")
+
+    // CAELUS *****************************************************************************************************
+    runtimeOnly fg.deobf("top.theillusivec4.caelus:caelus-forge:${caelus_version}")
+
+    // PLAYER ANIMATOR ********************************************************************************************
+    runtimeOnly fg.deobf("dev.kosmx.player-anim:player-animation-lib-forge:${player_animator_version}")
+
+    // CURIOS *****************************************************************************************************
+    runtimeOnly fg.deobf("top.theillusivec4.curios:curios-forge:${curios_version}")
+
+    // TETRA ******************************************************************************************************
+    //runtimeOnly fg.deobf("se.mickelus.mutil:mutil:${mutil_version}")
+    //runtimeOnly fg.deobf("curse.maven:tetra-${tetra_version}")
+
+    // JEI ********************************************************************************************************
+    //runtimeOnly fg.deobf("mezz.jei:jei-${jei_mc_version}-forge:${jei_version}")
+
+    // PATCHOULI **************************************************************************************************
+    //runtimeOnly fg.deobf("vazkii.patchouli:Patchouli:${patchouli_version}")
+
+    // APOTHEOSIS
+    //runtimeOnly fg.deobf("curse.maven:placebo-283644:4546960")
+    //runtimeOnly fg.deobf("curse.maven:apotheosis-313970:4547399")
+
+    // JSON ******************************************************************************************************
+    implementation "com.google.code.gson:gson:${gson_version}"
     // For more info:
     // http://www.gradle.org/docs/current/userguide/artifact_dependencies_tutorial.html
     // http://www.gradle.org/docs/current/userguide/dependency_management.html
