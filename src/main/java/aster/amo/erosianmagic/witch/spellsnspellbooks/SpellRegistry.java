@@ -18,4 +18,5 @@ public class SpellRegistry {
     }
     public static final DeferredRegister<AbstractSpell> SPELLS = DeferredRegister.create(SPELL_REGISTRY_KEY, ErosianMagic.MODID);
     public static final RegistryObject<AbstractSpell> HEXBLOOD_SPELL = registerSpell(new aster.amo.erosianmagic.witch.spellsnspellbooks.spells.HexbloodSpell());
+    public static final RegistryObject<AbstractSpell> PSYCHICSCREAM_SPELL = registerSpell(new aster.amo.erosianmagic.witch.spellsnspellbooks.spells.PsychicScreamSpell());
 }

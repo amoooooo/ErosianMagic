@@ -24,15 +24,22 @@ import net.minecraftforge.registries.RegistryObject;
 public class CastingSpell extends StaticSpell {
     final Deity deity;
     RegistryObject<AbstractSpell> spell;
-    public CastingSpell(ResourceLocation name, Deity deity, RegistryObject<AbstractSpell> spell, Sign... signs) {
+    int castTime;
+    public CastingSpell(ResourceLocation name, Deity deity, RegistryObject<AbstractSpell> spell, int castTime, Sign... signs) {
         super(name, signs);
         this.deity = deity;
         this.spell = spell;
+        this.castTime = castTime;
     }
 
     @Override
     public boolean canCast(Level level, BlockPos blockPos, Player player) {
         return !this.reputationCheck(level, player, 0.0D);
+    }
+
+    @Override
+    public int getCastTime() {
+        return castTime;
     }
 
     @Override

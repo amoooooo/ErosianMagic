@@ -1,5 +1,7 @@
 package aster.amo.erosianmagic.client;
 
+import aster.amo.erosianmagic.particle.ParticleRegistry;
+import aster.amo.erosianmagic.particle.PsychicScreamParticle;
 import aster.amo.erosianmagic.witch.eidolon.BookRegistry;
 import aster.amo.erosianmagic.witch.eidolon.QuickChant;
 import com.mojang.blaze3d.platform.InputConstants;
@@ -8,6 +10,7 @@ import elucent.eidolon.network.Networking;
 import elucent.eidolon.registries.EidolonSounds;
 import elucent.eidolon.registries.Registry;
 import elucent.eidolon.registries.Signs;
+import elucent.eidolon.util.KnowledgeUtil;
 import io.redspace.ironsspellbooks.api.registry.AttributeRegistry;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
@@ -20,6 +23,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemCooldowns;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.InputEvent;
+import net.minecraftforge.client.event.RegisterParticleProvidersEvent;
 import net.minecraftforge.client.event.RenderGuiOverlayEvent;
 import net.minecraftforge.client.gui.overlay.VanillaGuiOverlay;
 import net.minecraftforge.client.settings.KeyModifier;
@@ -41,6 +45,11 @@ public class ErosianMagicClient {
                 BookRegistry.init();
                 ErosianMagicClientForge.init();
             });
+        }
+
+        @SubscribeEvent
+        public static void registerParticles(RegisterParticleProvidersEvent event) {
+            event.registerSpriteSet(ParticleRegistry.PSYCHIC_SCREAM_PARTICLE_TYPE.get(), PsychicScreamParticle.Factory::new);
         }
     }
 
@@ -91,13 +100,16 @@ public class ErosianMagicClient {
         public static void onClickCapture(InputEvent.InteractionKeyMappingTriggered event) {
             if(Minecraft.getInstance().player == null) return;
             Player entity = Minecraft.getInstance().player;
-            ItemCooldowns cooldowns = entity.getCooldowns();
-            if(event.isAttack() && entity.getItemInHand(InteractionHand.MAIN_HAND).is(Registry.CODEX.get()) && !cooldowns.isOnCooldown(Registry.CODEX.get())) {
-                QuickChant.add(Signs.WICKED_SIGN);
-                Networking.sendToServer(new AttemptCastPacket(Minecraft.getInstance().player, QuickChant.getChant()));
-                AttributeInstance cdr = entity.getAttribute(AttributeRegistry.COOLDOWN_REDUCTION.get());
-                entity.getCooldowns().addCooldown(entity.getItemInHand(InteractionHand.MAIN_HAND).getItem(), (int) (20 * (1 - (cdr.getValue() - 1))));
-                QuickChant.clear();
+            if(!KnowledgeUtil.knowsSign(entity, Signs.MAGIC_SIGN)) return;
+            if(event.isAttack() && entity.getItemInHand(InteractionHand.MAIN_HAND).is(Registry.CODEX.get())){
+                ItemCooldowns cooldowns = entity.getCooldowns();
+                if(!cooldowns.isOnCooldown(Registry.CODEX.get())) {
+                    QuickChant.add(Signs.MAGIC_SIGN);
+                    Networking.sendToServer(new AttemptCastPacket(Minecraft.getInstance().player, QuickChant.getChant()));
+                    AttributeInstance cdr = entity.getAttribute(AttributeRegistry.COOLDOWN_REDUCTION.get());
+                    entity.getCooldowns().addCooldown(entity.getItemInHand(InteractionHand.MAIN_HAND).getItem(), (int) (5 * (1 - (cdr.getValue() - 1))));
+                    QuickChant.clear();
+                }
                 event.setSwingHand(false);
                 event.setCanceled(true);
             }
@@ -107,37 +119,37 @@ public class ErosianMagicClient {
         public static void onButtonPress(InputEvent.Key event) {
             if(Minecraft.getInstance().player == null) return;
             Player entity = Minecraft.getInstance().player;
-            if (KEY_1.consumeClick()) {
+            if (KEY_1.consumeClick() && KnowledgeUtil.knowsSign(entity, Signs.WICKED_SIGN)) {
                 QuickChant.add(Signs.WICKED_SIGN);
                 entity.playNotifySound((SoundEvent) EidolonSounds.SELECT_RUNE.get(), SoundSource.NEUTRAL, 0.5F, entity.level().random.nextFloat() * 0.25F + 0.75F);
-            } else if (KEY_2.consumeClick()) {
+            } else if (KEY_2.consumeClick() && KnowledgeUtil.knowsSign(entity, Signs.SACRED_SIGN)) {
                 QuickChant.add(Signs.SACRED_SIGN);
                 entity.playNotifySound((SoundEvent) EidolonSounds.SELECT_RUNE.get(), SoundSource.NEUTRAL, 0.5F, entity.level().random.nextFloat() * 0.25F + 0.75F);
-            } else if (KEY_3.consumeClick()) {
+            } else if (KEY_3.consumeClick() && KnowledgeUtil.knowsSign(entity, Signs.BLOOD_SIGN)) {
                 QuickChant.add(Signs.BLOOD_SIGN);
                 entity.playNotifySound((SoundEvent) EidolonSounds.SELECT_RUNE.get(), SoundSource.NEUTRAL, 0.5F, entity.level().random.nextFloat() * 0.25F + 0.75F);
-            } else if (KEY_4.consumeClick()) {
+            } else if (KEY_4.consumeClick() && KnowledgeUtil.knowsSign(entity, Signs.SOUL_SIGN)) {
                 QuickChant.add(Signs.SOUL_SIGN);
                 entity.playNotifySound((SoundEvent) EidolonSounds.SELECT_RUNE.get(), SoundSource.NEUTRAL, 0.5F, entity.level().random.nextFloat() * 0.25F + 0.75F);
-            } else if (KEY_5.consumeClick()) {
+            } else if (KEY_5.consumeClick() && KnowledgeUtil.knowsSign(entity, Signs.MIND_SIGN)) {
                 QuickChant.add(Signs.MIND_SIGN);
                 entity.playNotifySound((SoundEvent) EidolonSounds.SELECT_RUNE.get(), SoundSource.NEUTRAL, 0.5F, entity.level().random.nextFloat() * 0.25F + 0.75F);
-            } else if (KEY_6.consumeClick()) {
+            } else if (KEY_6.consumeClick() && KnowledgeUtil.knowsSign(entity, Signs.FLAME_SIGN)) {
                 QuickChant.add(Signs.FLAME_SIGN);
                 entity.playNotifySound((SoundEvent) EidolonSounds.SELECT_RUNE.get(), SoundSource.NEUTRAL, 0.5F, entity.level().random.nextFloat() * 0.25F + 0.75F);
-            } else if (KEY_7.consumeClick()) {
+            } else if (KEY_7.consumeClick() && KnowledgeUtil.knowsSign(entity, Signs.WINTER_SIGN)) {
                 QuickChant.add(Signs.WINTER_SIGN);
                 entity.playNotifySound((SoundEvent) EidolonSounds.SELECT_RUNE.get(), SoundSource.NEUTRAL, 0.5F, entity.level().random.nextFloat() * 0.25F + 0.75F);
-            } else if (KEY_8.consumeClick()) {
+            } else if (KEY_8.consumeClick() && KnowledgeUtil.knowsSign(entity, Signs.HARMONY_SIGN)) {
                 QuickChant.add(Signs.HARMONY_SIGN);
                 entity.playNotifySound((SoundEvent) EidolonSounds.SELECT_RUNE.get(), SoundSource.NEUTRAL, 0.5F, entity.level().random.nextFloat() * 0.25F + 0.75F);
-            } else if (KEY_9.consumeClick()) {
+            } else if (KEY_9.consumeClick() && KnowledgeUtil.knowsSign(entity, Signs.DEATH_SIGN)) {
                 QuickChant.add(Signs.DEATH_SIGN);
                 entity.playNotifySound((SoundEvent) EidolonSounds.SELECT_RUNE.get(), SoundSource.NEUTRAL, 0.5F, entity.level().random.nextFloat() * 0.25F + 0.75F);
-            } else if (KEY_0.consumeClick()) {
+            } else if (KEY_0.consumeClick() && KnowledgeUtil.knowsSign(entity, Signs.WARDING_SIGN)) {
                 QuickChant.add(Signs.WARDING_SIGN);
                 entity.playNotifySound((SoundEvent) EidolonSounds.SELECT_RUNE.get(), SoundSource.NEUTRAL, 0.5F, entity.level().random.nextFloat() * 0.25F + 0.75F);
-            } else if (KEY_MINUS.consumeClick()) {
+            } else if (KEY_MINUS.consumeClick() && KnowledgeUtil.knowsSign(entity, Signs.MAGIC_SIGN)) {
                 QuickChant.add(Signs.MAGIC_SIGN);
                 entity.playNotifySound((SoundEvent) EidolonSounds.SELECT_RUNE.get(), SoundSource.NEUTRAL, 0.5F, entity.level().random.nextFloat() * 0.25F + 0.75F);
             } else if (KEY_GRAVE_ACCENT.consumeClick()) {
