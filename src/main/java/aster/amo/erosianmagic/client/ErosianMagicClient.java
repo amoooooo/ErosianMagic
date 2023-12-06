@@ -6,13 +6,18 @@ import com.mojang.blaze3d.platform.InputConstants;
 import elucent.eidolon.network.AttemptCastPacket;
 import elucent.eidolon.network.Networking;
 import elucent.eidolon.registries.EidolonSounds;
+import elucent.eidolon.registries.Registry;
 import elucent.eidolon.registries.Signs;
+import io.redspace.ironsspellbooks.api.registry.AttributeRegistry;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemCooldowns;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.InputEvent;
 import net.minecraftforge.client.event.RenderGuiOverlayEvent;
@@ -80,6 +85,22 @@ public class ErosianMagicClient {
             KEY_MINUS.setKeyModifierAndCode(KeyModifier.ALT, KEY_MINUS.getKey());
             KEY_Q.setKeyModifierAndCode(KeyModifier.ALT, KEY_Q.getKey());
             KEY_GRAVE_ACCENT.setKeyModifierAndCode(KeyModifier.ALT, KEY_GRAVE_ACCENT.getKey());
+        }
+
+        @SubscribeEvent
+        public static void onClickCapture(InputEvent.InteractionKeyMappingTriggered event) {
+            if(Minecraft.getInstance().player == null) return;
+            Player entity = Minecraft.getInstance().player;
+            ItemCooldowns cooldowns = entity.getCooldowns();
+            if(event.isAttack() && entity.getItemInHand(InteractionHand.MAIN_HAND).is(Registry.CODEX.get()) && !cooldowns.isOnCooldown(Registry.CODEX.get())) {
+                QuickChant.add(Signs.WICKED_SIGN);
+                Networking.sendToServer(new AttemptCastPacket(Minecraft.getInstance().player, QuickChant.getChant()));
+                AttributeInstance cdr = entity.getAttribute(AttributeRegistry.COOLDOWN_REDUCTION.get());
+                entity.getCooldowns().addCooldown(entity.getItemInHand(InteractionHand.MAIN_HAND).getItem(), (int) (20 * (1 - (cdr.getValue() - 1))));
+                QuickChant.clear();
+                event.setSwingHand(false);
+                event.setCanceled(true);
+            }
         }
 
         @SubscribeEvent
