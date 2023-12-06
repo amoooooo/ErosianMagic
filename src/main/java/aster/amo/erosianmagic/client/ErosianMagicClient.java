@@ -27,6 +27,7 @@ import net.minecraftforge.client.event.RegisterParticleProvidersEvent;
 import net.minecraftforge.client.event.RenderGuiOverlayEvent;
 import net.minecraftforge.client.gui.overlay.VanillaGuiOverlay;
 import net.minecraftforge.client.settings.KeyModifier;
+import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
@@ -79,6 +80,7 @@ public class ErosianMagicClient {
         public static final KeyMapping KEY_MINUS = new KeyMapping("key.erosianmagic.minus", GLFW.GLFW_KEY_MINUS, "key.erosianmagic.category");
         public static final KeyMapping KEY_GRAVE_ACCENT = new KeyMapping("key.erosianmagic.grave_accent", GLFW.GLFW_KEY_GRAVE_ACCENT, "key.erosianmagic.category");
         public static final KeyMapping KEY_Q = new KeyMapping("key.erosianmagic.q", GLFW.GLFW_KEY_Q, "key.erosianmagic.category");
+        public static final KeyMapping KEY_LMB = new KeyMapping("key.erosianmagic.lmb", GLFW.GLFW_KEY_LEFT_ALT, "key.erosianmagic.category");
 
         public static void init() {
             KEY_1.setKeyModifierAndCode(KeyModifier.ALT, KEY_1.getKey());
@@ -96,6 +98,7 @@ public class ErosianMagicClient {
             KEY_GRAVE_ACCENT.setKeyModifierAndCode(KeyModifier.ALT, KEY_GRAVE_ACCENT.getKey());
         }
 
+        public static int cooldown = 0;
         @SubscribeEvent
         public static void onClickCapture(InputEvent.InteractionKeyMappingTriggered event) {
             if(Minecraft.getInstance().player == null) return;
@@ -112,7 +115,26 @@ public class ErosianMagicClient {
                 }
                 event.setSwingHand(false);
                 event.setCanceled(true);
+            } else if(event.isAttack()){
+                if(KEY_LMB.isDown() && cooldown == 0 && KnowledgeUtil.knowsSign(entity, Signs.HARMONY_SIGN)) {
+                    QuickChant.add(Signs.MAGIC_SIGN);
+                    Networking.sendToServer(new AttemptCastPacket(Minecraft.getInstance().player, QuickChant.getChant()));
+                    AttributeInstance cdr = entity.getAttribute(AttributeRegistry.COOLDOWN_REDUCTION.get());
+                    cooldown = (int) (3 * (1 - (cdr.getValue() - 1)));
+                    QuickChant.clear();
+                    event.setSwingHand(false);
+                    event.setCanceled(true);
+                }
             }
+        }
+
+        @SubscribeEvent
+        public static void onClientTick(TickEvent.ClientTickEvent event) {
+            if(event.phase == TickEvent.Phase.END){
+                if(Minecraft.getInstance().player == null) return;
+                QuickChant.validateChant();
+            }
+            if(cooldown > 0) cooldown--;
         }
 
         @SubscribeEvent
@@ -160,5 +182,6 @@ public class ErosianMagicClient {
                 QuickChant.clear();
             }
         }
+
     }
 }

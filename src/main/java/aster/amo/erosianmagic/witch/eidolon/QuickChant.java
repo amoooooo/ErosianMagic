@@ -3,15 +3,18 @@ package aster.amo.erosianmagic.witch.eidolon;
 import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.systems.RenderSystem;
 import elucent.eidolon.api.spells.Sign;
+import elucent.eidolon.api.spells.SignSequence;
 import elucent.eidolon.client.ClientRegistry;
 import elucent.eidolon.event.ClientEvents;
+import elucent.eidolon.network.AttemptCastPacket;
+import elucent.eidolon.network.Networking;
+import elucent.eidolon.registries.Spells;
 import elucent.eidolon.util.RenderUtil;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
-import net.minecraft.network.chat.Component;
 import net.minecraft.world.inventory.InventoryMenu;
 import org.jetbrains.annotations.NotNull;
 
@@ -22,10 +25,26 @@ import java.util.List;
 import static elucent.eidolon.codex.CodexGui.blit;
 
 public class QuickChant {
-    static final List<Sign> chant = new ArrayList();
+    static final List<Sign> chant = new ArrayList<>();
 
+    public static int tickTime = 0;
     public static void add(Sign sign) {
         chant.add(sign);
+        tickTime = 0;
+    }
+
+    public static void validateChant() {
+        if(chant.isEmpty()) {
+            return;
+        }
+        if(tickTime++ < 10) {
+            return;
+        }
+        tickTime = 0;
+        if(Spells.find(new SignSequence(chant)) != null){
+            Networking.sendToServer(new AttemptCastPacket(Minecraft.getInstance().player, QuickChant.getChant()));
+            clear();
+        }
     }
 
     public static void clear() {
@@ -70,7 +89,7 @@ public class QuickChant {
         bgx = baseX + 16;
         MultiBufferSource.BufferSource buffersource = Minecraft.getInstance().renderBuffers().bufferSource();
 
-        for(Iterator var14 = chant.iterator(); var14.hasNext(); bgx += 24) {
+        for(Iterator<Sign> var14 = chant.iterator(); var14.hasNext(); bgx += 24) {
             Sign sign = (Sign)var14.next();
             RenderUtil.litQuad(mStack.pose(), buffersource, (double)(bgx + 4), (double)(baseY + 4), 16.0, 16.0, sign.getRed(), sign.getGreen(), sign.getBlue(), (TextureAtlasSprite)Minecraft.getInstance().getTextureAtlas(InventoryMenu.BLOCK_ATLAS).apply(sign.getSprite()));
             buffersource.endBatch();

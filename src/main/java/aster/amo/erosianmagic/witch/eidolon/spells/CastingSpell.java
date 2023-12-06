@@ -25,11 +25,21 @@ public class CastingSpell extends StaticSpell {
     final Deity deity;
     RegistryObject<AbstractSpell> spell;
     int castTime;
+    float costModifier;
     public CastingSpell(ResourceLocation name, Deity deity, RegistryObject<AbstractSpell> spell, int castTime, Sign... signs) {
         super(name, signs);
         this.deity = deity;
         this.spell = spell;
         this.castTime = castTime;
+        this.costModifier = 1.0f;
+    }
+
+    public CastingSpell(ResourceLocation name, Deity deity, RegistryObject<AbstractSpell> spell, int castTime, float costModifier, Sign... signs) {
+        super(name, signs);
+        this.deity = deity;
+        this.spell = spell;
+        this.castTime = castTime;
+        this.costModifier = costModifier;
     }
 
     @Override
@@ -46,14 +56,17 @@ public class CastingSpell extends StaticSpell {
     public void cast(Level level, BlockPos blockPos, Player player) {
         if(spell != null) {
             if(!level.isClientSide) {
-                int spellLevel = getLevel(level, player, 1, this.spell.get());
-                this.spell.get().attemptInitiateCast(player.getItemInHand(InteractionHand.MAIN_HAND), spellLevel, level, (ServerPlayer) player, CastSource.SCROLL, false);
-                level.getCapability(IReputation.INSTANCE, (Direction)null).ifPresent((rep) -> {
-                    rep.pray(player, this.getRegistryName(), level.getGameTime());
-                    rep.addReputation(player, this.deity.getId(), 0.1 + 0.25 * spellLevel);
-                });
                 player.getCapability(ISoul.INSTANCE, (Direction)null).ifPresent((soul) -> {
-                    soul.takeMagic((float) (1.0f/spell.get().getMaxLevel()) * 10.0f * signs().length);
+                    float cost = (float) (1.0f/spell.get().getMaxLevel()) * 10.0f * signs().length * costModifier;
+                    if(!soul.hasMagic() || soul.getMagic() < cost) return;
+                    int spellLevel = getLevel(level, player, 1, this.spell.get());
+                    this.spell.get().attemptInitiateCast(player.getItemInHand(InteractionHand.MAIN_HAND), spellLevel, level, (ServerPlayer) player, CastSource.SCROLL, false);
+                    level.getCapability(IReputation.INSTANCE, (Direction)null).ifPresent((rep) -> {
+                        rep.pray(player, this.getRegistryName(), level.getGameTime());
+                        rep.addReputation(player, this.deity.getId(), 0.1 + 0.25 * spellLevel);
+                    });
+                    if(cost <= 0.0) return;
+                    soul.takeMagic(cost);
                     Networking.sendTo((ServerPlayer) player, new SoulUpdatePacket(player));
                 });
             }

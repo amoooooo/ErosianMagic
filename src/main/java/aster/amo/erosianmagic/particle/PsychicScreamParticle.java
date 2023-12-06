@@ -40,6 +40,7 @@ public class PsychicScreamParticle extends TextureSheetParticle {
         }
     }
 
+    @Override
     public void render(VertexConsumer p_107678_, Camera p_107679_, float p_107680_) {
         Vec3 vec3 = p_107679_.getPosition();
         float f = (float)(Mth.lerp((double)p_107680_, this.xo, this.x) - vec3.x());

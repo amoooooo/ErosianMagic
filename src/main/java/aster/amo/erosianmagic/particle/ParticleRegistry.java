@@ -15,7 +15,7 @@ public class ParticleRegistry {
         PARTICLE_TYPES.register(eventBus);
     }
 
-    public static final RegistryObject<ParticleType<PsychicScreamParticleOptions>> PSYCHIC_SCREAM_PARTICLE_TYPE = PARTICLE_TYPES.register("psychic_scream", () -> new ParticleType<PsychicScreamParticleOptions>(false, PsychicScreamParticleOptions.DESERIALIZER) {
+    public static final RegistryObject<ParticleType<PsychicScreamParticleOptions>> PSYCHIC_SCREAM_PARTICLE_TYPE = PARTICLE_TYPES.register("psychicscream", () -> new ParticleType<PsychicScreamParticleOptions>(false, PsychicScreamParticleOptions.DESERIALIZER) {
         @Override
         public Codec<PsychicScreamParticleOptions> codec() {
             return RecordCodecBuilder.create((instance) -> instance.group(

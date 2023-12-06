@@ -8,6 +8,7 @@ import net.minecraft.core.particles.ParticleType;
 import net.minecraft.core.particles.SimpleParticleType;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraftforge.registries.ForgeRegistries;
 import org.joml.Vector3f;
 
 public class PsychicScreamParticleOptions extends SimpleParticleType {
@@ -27,11 +28,6 @@ public class PsychicScreamParticleOptions extends SimpleParticleType {
         p_123840_.writeFloat(facing.x());
         p_123840_.writeFloat(facing.y());
         p_123840_.writeFloat(facing.z());
-    }
-
-    @Override
-    public String writeToString() {
-        return String.format("%s %.2f %.2f %.2f", BuiltInRegistries.PARTICLE_TYPE.getKey(this.getType()), facing.x(), facing.y(), facing.z());
     }
 
     Vector3f facing;
