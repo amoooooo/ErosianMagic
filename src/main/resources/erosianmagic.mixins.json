@@ -3,8 +3,10 @@
   "minVersion": "0.8",
   "package": "aster.amo.erosianmagic.mixin",
   "compatibilityLevel": "JAVA_8",
-  "refmap": "ErosianMagic.refmap.json",
+  "refmap": "erosianmagic.refmap.json",
   "mixins": [
+    "EntityMixin",
+    "client.LivingEntityRendererMixin"
   ],
   "client": [
   ],

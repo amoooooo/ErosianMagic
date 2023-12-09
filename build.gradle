@@ -159,6 +159,9 @@ repositories {
     maven { url = "https://maven.theillusivec4.top" }
     maven { url = "https://maven.blamejared.com" }
     maven { url = "https://maven.kosmx.dev/" }
+    maven {
+        url = "https://api.modrinth.com/maven"
+    }
 }
 
 dependencies {
@@ -178,14 +181,14 @@ dependencies {
     // Example mod dependency using a mod jar from ./libs with a flat dir repository
     // This maps to ./libs/coolmod-${mc_version}-${coolmod_version}.jar
     // The group id is ignored when searching -- in this case, it is "blank"
-    implementation fg.deobf("elucent.eidolon:eidolon_repraised:1.20.1-0.3.7.5")
+//    implementation fg.deobf("elucent.eidolon:eidolon_repraised:1.20.1-0.3.7.5")
 //    implementation fg.deobf("curse.maven:eidolon-repraised-870250:4928824")
     implementation fg.deobf("curse.maven:curios-309927:4913335")
     // IRONS SPELLS N SPELLBOOKS **********************************************************************************
     implementation fg.deobf("io.redspace.ironsspellbooks:irons_spellbooks:${irons_spells_version}")
 
     // GECKOLIB ***************************************************************************************************
-    runtimeOnly fg.deobf("software.bernie.geckolib:geckolib-forge-${geckolib_version}")
+    implementation fg.deobf("software.bernie.geckolib:geckolib-forge-${geckolib_version}")
 
     // CAELUS *****************************************************************************************************
     runtimeOnly fg.deobf("top.theillusivec4.caelus:caelus-forge:${caelus_version}")
@@ -195,6 +198,10 @@ dependencies {
 
     // CURIOS *****************************************************************************************************
     runtimeOnly fg.deobf("top.theillusivec4.curios:curios-forge:${curios_version}")
+
+    implementation fg.deobf(fileTree(dir: 'libs', include: ['*.jar']))
+
+    implementation fg.deobf("maven.modrinth:UUD6Qkij:z0XEGXJ3")
 
     // TETRA ******************************************************************************************************
     //runtimeOnly fg.deobf("se.mickelus.mutil:mutil:${mutil_version}")

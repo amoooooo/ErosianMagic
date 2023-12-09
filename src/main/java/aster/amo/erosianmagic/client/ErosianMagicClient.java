@@ -12,6 +12,9 @@ import elucent.eidolon.registries.Registry;
 import elucent.eidolon.registries.Signs;
 import elucent.eidolon.util.KnowledgeUtil;
 import io.redspace.ironsspellbooks.api.registry.AttributeRegistry;
+import io.redspace.ironsspellbooks.player.ClientMagicData;
+import net.leawind.mc.thirdpersonperspective.ThirdPersonPerspective;
+import net.minecraft.client.CameraType;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
 import net.minecraft.sounds.SoundEvent;
@@ -21,6 +24,7 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemCooldowns;
+import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.InputEvent;
 import net.minecraftforge.client.event.RegisterParticleProvidersEvent;
@@ -33,10 +37,14 @@ import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.network.NetworkHooks;
 import org.lwjgl.glfw.GLFW;
+import yesman.epicfight.world.item.EpicFightItems;
+import yesman.epicfight.world.item.WeaponItem;
 
 import static aster.amo.erosianmagic.ErosianMagic.MODID;
 
 public class ErosianMagicClient {
+    public static long lastCombatTime = 0;
+
     @Mod.EventBusSubscriber(modid = MODID, bus = Mod.EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
     static
     class ErosianMagicClientMod {
@@ -128,11 +136,28 @@ public class ErosianMagicClient {
             }
         }
 
+        private static boolean shouldAim = false;
         @SubscribeEvent
         public static void onClientTick(TickEvent.ClientTickEvent event) {
             if(event.phase == TickEvent.Phase.END){
                 if(Minecraft.getInstance().player == null) return;
+                if(Minecraft.getInstance().level == null) return;
                 QuickChant.validateChant();
+                ItemStack stack = Minecraft.getInstance().player.getItemInHand(InteractionHand.MAIN_HAND);
+                if(Minecraft.getInstance().level.getGameTime() - lastCombatTime < 100) {
+                    Minecraft.getInstance().options.setCameraType(CameraType.THIRD_PERSON_BACK);
+                    Minecraft.getInstance().options.setCameraType(CameraType.THIRD_PERSON_FRONT);
+                }
+                if(Minecraft.getInstance().options.getCameraType() == CameraType.THIRD_PERSON_BACK) {
+                    Minecraft.getInstance().options.setCameraType(CameraType.THIRD_PERSON_FRONT);
+                }
+                if((stack.getItem() instanceof WeaponItem we || ClientMagicData.isCasting()) && !shouldAim) {
+                    shouldAim = true;
+                    ThirdPersonPerspective.Options.isForceKeepAiming = true;
+                } else if(!(stack.getItem() instanceof WeaponItem we || ClientMagicData.isCasting()) && shouldAim) {
+                    shouldAim = false;
+                    ThirdPersonPerspective.Options.isForceKeepAiming = false;
+                }
             }
             if(cooldown > 0) cooldown--;
         }

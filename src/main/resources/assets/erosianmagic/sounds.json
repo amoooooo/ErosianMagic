@@ -1,0 +1,11 @@
+{
+  "storms": {
+    "sounds": [
+      {
+        "name": "erosianmagic:songs/storms",
+        "weight": 1,
+        "stream": true
+      }
+    ]
+  }
+}

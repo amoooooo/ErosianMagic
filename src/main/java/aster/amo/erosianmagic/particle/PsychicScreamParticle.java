@@ -1,13 +1,20 @@
 package aster.amo.erosianmagic.particle;
 
-import com.mojang.blaze3d.vertex.VertexConsumer;
+import com.mojang.blaze3d.systems.RenderSystem;
+import com.mojang.blaze3d.vertex.*;
 import net.minecraft.client.Camera;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.particle.*;
+import net.minecraft.client.renderer.GameRenderer;
+import net.minecraft.client.renderer.LightTexture;
+import net.minecraft.client.renderer.texture.TextureAtlas;
+import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.util.Mth;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
 import org.joml.Quaternionf;
+import org.joml.Vector3d;
 import org.joml.Vector3f;
 
 public class PsychicScreamParticle extends TextureSheetParticle {
@@ -16,60 +23,109 @@ public class PsychicScreamParticle extends TextureSheetParticle {
         super(p_108323_, p_108324_, p_108325_, p_108326_);
         pickSprite(sprite);
         this.facing = facing;
+        this.lifetime = 20;
+        this.xd = facing.x() * 5;
+        this.yd = facing.y() * 5;
+        this.zd = facing.z() * 5;
     }
 
     @Override
     public ParticleRenderType getRenderType() {
-        return ParticleRenderType.PARTICLE_SHEET_OPAQUE;
+        return new ParticleRenderType() {
+            public void begin(BufferBuilder p_107448_, TextureManager p_107449_) {
+                RenderSystem.disableCull();
+                RenderSystem.disableBlend();
+                RenderSystem.depthMask(true);
+                RenderSystem.setShader(GameRenderer::getParticleShader);
+                RenderSystem.setShaderTexture(0, TextureAtlas.LOCATION_PARTICLES);
+                p_107448_.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.PARTICLE);
+            }
+
+            public void end(Tesselator p_107451_) {
+                p_107451_.end();
+            }
+
+            public String toString() {
+                return "SCREAM";
+            }
+        };
     }
 
+    float yaw = 0;
+    float pitch = 0;
+    float roll = 0;
+    float oYaw = 0;
+    float oPitch = 0;
+    float oRoll = 0;
+    Vec3 motion = new Vec3(0,0,0);
     @Override
     public void tick() {
         this.xo = this.x;
         this.yo = this.y;
         this.zo = this.z;
-        this.quadSize *= 1.01;
+        this.quadSize *= 1.05;
         if (this.age++ >= this.lifetime) {
             this.remove();
         } else {
-            // slowly move in the direction of facing and grow to 2x size
-            this.xd += facing.x() * 0.01;
-            this.yd += facing.y() * 0.01;
-            this.zd += facing.z() * 0.01;
             this.alpha = 1 - (float) this.age / (float) this.lifetime;
         }
+        motion = motion.normalize();
+        pitch = (float) Math.atan2(motion.y, Math.sqrt(motion.x * motion.x + motion.z * motion.z));
+        yaw = (float) Math.atan2(motion.x, motion.z);
+        yaw += Math.PI / 2;
     }
+    public static final Vec3[] PLANE = {
+            new Vec3(-1, 1, 0), new Vec3(1, 1, 0), new Vec3(1, -1, 0), new Vec3(-1, -1, 0)
+    };
 
     @Override
-    public void render(VertexConsumer p_107678_, Camera p_107679_, float p_107680_) {
-        Vec3 vec3 = p_107679_.getPosition();
-        float f = (float)(Mth.lerp((double)p_107680_, this.xo, this.x) - vec3.x());
-        float f1 = (float)(Mth.lerp((double)p_107680_, this.yo, this.y) - vec3.y());
-        float f2 = (float)(Mth.lerp((double)p_107680_, this.zo, this.z) - vec3.z());
+    public void render(VertexConsumer consumer, Camera camera, float partialTicks) {
+        float lerpedX = (float) Mth.lerp(partialTicks, xo, x);
+        float lerpedY = (float) Mth.lerp(partialTicks, yo, y);
+        float lerpedZ = (float) Mth.lerp(partialTicks, zo, z);
+        float lerpedYaw = Mth.lerp(partialTicks, oYaw, yaw);
+        float lerpedPitch = Mth.lerp(partialTicks, oPitch, pitch);
+        float lerpedRoll = Mth.lerp(partialTicks, oRoll,roll);
+        Vec3[] faceVerts = new Vec3[]{
+                PLANE[0],
+                PLANE[1],
+                PLANE[2],
+                PLANE[3]
+        };
 
-        Quaternionf quaternionf = new Quaternionf();
-        // turn facing into a quat
-        quaternionf.rotateXYZ(facing.x(), facing.y(), facing.z());
+        Quaternionf faceCameraRotation = Minecraft.getInstance().getEntityRenderDispatcher().cameraOrientation();
+        RenderSystem.setShaderTexture(0, sprite.atlasLocation());
+        // turn quat into pitch and yaw
+        for (int j = 0; j < 4; j++) {
+            Vector3f vec = faceVerts[j].scale(-1).toVector3f();
+//            vec = vec
+//                    .rotateX(lerpedRoll)
+//                    .rotateY(lerpedPitch)
+//                    .rotateZ(lerpedYaw);
+//                vec = vec.xRot(lerpedPitch).yRot(lerpedYaw).zRot(lerpedRoll);
+            vec = vec.add(new Vector3f(lerpedX, lerpedY, lerpedZ));
 
-        Vector3f[] avector3f = new Vector3f[]{new Vector3f(-1.0F, -1.0F, 0.0F), new Vector3f(-1.0F, 1.0F, 0.0F), new Vector3f(1.0F, 1.0F, 0.0F), new Vector3f(1.0F, -1.0F, 0.0F)};
-        float f3 = this.getQuadSize(p_107680_);
-
-        for(int i = 0; i < 4; ++i) {
-            Vector3f vector3f = avector3f[i];
-//            vector3f.rotate(quaternionf);
-            vector3f.mul(f3);
-            vector3f.add(f, f1, f2);
+            float u = 0;
+            float v = 0;
+            if (j == 0) {
+                u = 0;
+                v = 0;
+            } else if (j == 1) {
+                u = 1;
+                v = 0;
+            } else if (j == 2) {
+                u = 1;
+                v = 1;
+            } else {
+                u = 0;
+                v = 1;
+            }
+            consumer.vertex(vec.x, vec.y, vec.z)
+                    .uv(u, v)
+                    .color(1f,1f,1f,1f)
+                    .uv2(LightTexture.FULL_BRIGHT)
+                    .endVertex();
         }
-
-        float f6 = this.getU0();
-        float f7 = this.getU1();
-        float f4 = this.getV0();
-        float f5 = this.getV1();
-        int j = this.getLightColor(p_107680_);
-        p_107678_.vertex((double)avector3f[0].x(), (double)avector3f[0].y(), (double)avector3f[0].z()).uv(f7, f5).color(this.rCol, this.gCol, this.bCol, this.alpha).uv2(j).endVertex();
-        p_107678_.vertex((double)avector3f[1].x(), (double)avector3f[1].y(), (double)avector3f[1].z()).uv(f7, f4).color(this.rCol, this.gCol, this.bCol, this.alpha).uv2(j).endVertex();
-        p_107678_.vertex((double)avector3f[2].x(), (double)avector3f[2].y(), (double)avector3f[2].z()).uv(f6, f4).color(this.rCol, this.gCol, this.bCol, this.alpha).uv2(j).endVertex();
-        p_107678_.vertex((double)avector3f[3].x(), (double)avector3f[3].y(), (double)avector3f[3].z()).uv(f6, f5).color(this.rCol, this.gCol, this.bCol, this.alpha).uv2(j).endVertex();
     }
 
     public static class Factory implements ParticleProvider<PsychicScreamParticleOptions> {

@@ -36,7 +36,7 @@ public class PsychicScreamSpell extends AbstractSpell {
     @Override
     public void onCast(Level level, int spellLevel, LivingEntity entity, MagicData playerMagicData) {
         Vector3f facing = entity.getLookAngle().toVector3f();
-        PsychicScreamParticleOptions options = new PsychicScreamParticleOptions(false, facing);
+        PsychicScreamParticleOptions options = new PsychicScreamParticleOptions(facing);
         ((ServerLevel) level).sendParticles(options,
                 entity.getX(), entity.getY() + entity.getEyeHeight(), entity.getZ(),
                 1, 0, 0, 0, 0);

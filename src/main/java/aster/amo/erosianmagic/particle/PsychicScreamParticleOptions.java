@@ -9,17 +9,18 @@ import net.minecraft.core.particles.SimpleParticleType;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraftforge.registries.ForgeRegistries;
+import org.jetbrains.annotations.NotNull;
 import org.joml.Vector3f;
 
-public class PsychicScreamParticleOptions extends SimpleParticleType {
+public class PsychicScreamParticleOptions implements ParticleOptions {
     public static final ParticleOptions.Deserializer<PsychicScreamParticleOptions> DESERIALIZER = new ParticleOptions.Deserializer<PsychicScreamParticleOptions>() {
         public PsychicScreamParticleOptions fromCommand(ParticleType<PsychicScreamParticleOptions> p_123846_, StringReader sr) throws CommandSyntaxException {
             Vector3f facing = DustParticleOptionsBase.readVector3f(sr);
-            return new PsychicScreamParticleOptions(p_123846_.getOverrideLimiter(), facing);
+            return new PsychicScreamParticleOptions(facing);
         }
 
         public PsychicScreamParticleOptions fromNetwork(ParticleType<PsychicScreamParticleOptions> p_123849_, FriendlyByteBuf p_123850_) {
-            return new PsychicScreamParticleOptions(p_123849_.getOverrideLimiter(), DustParticleOptionsBase.readVector3f(p_123850_));
+            return new PsychicScreamParticleOptions(DustParticleOptionsBase.readVector3f(p_123850_));
         }
     };
 
@@ -30,14 +31,19 @@ public class PsychicScreamParticleOptions extends SimpleParticleType {
         p_123840_.writeFloat(facing.z());
     }
 
+    @Override
+    public String writeToString() {
+        return ForgeRegistries.PARTICLE_TYPES.getKey(this.getType()) + " " + facing.x() + " " + facing.y() + " " + facing.z();
+    }
+
     Vector3f facing;
-    public PsychicScreamParticleOptions(boolean p_123837_, Vector3f facing) {
-        super(p_123837_);
+    public PsychicScreamParticleOptions(Vector3f facing) {
+        super();
         this.facing = facing;
     }
 
     public PsychicScreamParticleOptions(float x, float y, float z) {
-        super(false);
+        super();
         this.facing = new Vector3f(x, y, z);
     }
 
@@ -60,6 +66,7 @@ public class PsychicScreamParticleOptions extends SimpleParticleType {
     public float getZ() {
         return facing.z();
     }
-
-
+    public @NotNull ParticleType<PsychicScreamParticleOptions> getType() {
+        return ParticleRegistry.PSYCHIC_SCREAM_PARTICLE_TYPE.get();
+    }
 }
