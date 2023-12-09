@@ -1,9 +1,12 @@
 package aster.amo.erosianmagic.client;
 
+import aster.amo.erosianmagic.bard.SongPacket;
 import aster.amo.erosianmagic.particle.ParticleRegistry;
 import aster.amo.erosianmagic.particle.PsychicScreamParticle;
+import aster.amo.erosianmagic.registry.EntityRegistry;
 import aster.amo.erosianmagic.witch.eidolon.BookRegistry;
 import aster.amo.erosianmagic.witch.eidolon.QuickChant;
+import com.cstav.genshinstrument.item.InstrumentItem;
 import com.mojang.blaze3d.platform.InputConstants;
 import elucent.eidolon.network.AttemptCastPacket;
 import elucent.eidolon.network.Networking;
@@ -17,6 +20,8 @@ import net.leawind.mc.thirdpersonperspective.ThirdPersonPerspective;
 import net.minecraft.client.CameraType;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.entity.NoopRenderer;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
@@ -26,6 +31,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemCooldowns;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.client.event.EntityRenderersEvent;
 import net.minecraftforge.client.event.InputEvent;
 import net.minecraftforge.client.event.RegisterParticleProvidersEvent;
 import net.minecraftforge.client.event.RenderGuiOverlayEvent;
@@ -59,6 +65,11 @@ public class ErosianMagicClient {
         @SubscribeEvent
         public static void registerParticles(RegisterParticleProvidersEvent event) {
             event.registerSpriteSet(ParticleRegistry.PSYCHIC_SCREAM_PARTICLE_TYPE.get(), PsychicScreamParticle.Factory::new);
+        }
+
+        @SubscribeEvent
+        public static void registerEntityRenderers(EntityRenderersEvent.RegisterRenderers event) {
+            event.registerEntityRenderer(EntityRegistry.AOE_EFFECT.get(), NoopRenderer::new);
         }
     }
 
@@ -111,28 +122,30 @@ public class ErosianMagicClient {
         public static void onClickCapture(InputEvent.InteractionKeyMappingTriggered event) {
             if(Minecraft.getInstance().player == null) return;
             Player entity = Minecraft.getInstance().player;
-            if(!KnowledgeUtil.knowsSign(entity, Signs.MAGIC_SIGN)) return;
-            if(event.isAttack() && entity.getItemInHand(InteractionHand.MAIN_HAND).is(Registry.CODEX.get())){
-                ItemCooldowns cooldowns = entity.getCooldowns();
-                if(!cooldowns.isOnCooldown(Registry.CODEX.get())) {
-                    QuickChant.add(Signs.MAGIC_SIGN);
-                    Networking.sendToServer(new AttemptCastPacket(Minecraft.getInstance().player, QuickChant.getChant()));
-                    AttributeInstance cdr = entity.getAttribute(AttributeRegistry.COOLDOWN_REDUCTION.get());
-                    entity.getCooldowns().addCooldown(entity.getItemInHand(InteractionHand.MAIN_HAND).getItem(), (int) (5 * (1 - (cdr.getValue() - 1))));
-                    QuickChant.clear();
-                }
-                event.setSwingHand(false);
-                event.setCanceled(true);
-            } else if(event.isAttack()){
-                if(KEY_LMB.isDown() && cooldown == 0 && KnowledgeUtil.knowsSign(entity, Signs.HARMONY_SIGN)) {
-                    QuickChant.add(Signs.MAGIC_SIGN);
-                    Networking.sendToServer(new AttemptCastPacket(Minecraft.getInstance().player, QuickChant.getChant()));
-                    AttributeInstance cdr = entity.getAttribute(AttributeRegistry.COOLDOWN_REDUCTION.get());
-                    cooldown = (int) (3 * (1 - (cdr.getValue() - 1)));
-                    QuickChant.clear();
+            if(event.isAttack()){
+                if(entity.getItemInHand(InteractionHand.MAIN_HAND).is(Registry.CODEX.get())) {
+                    if(!KnowledgeUtil.knowsSign(entity, Signs.MAGIC_SIGN)) return;
+                    ItemCooldowns cooldowns = entity.getCooldowns();
+                    if (!cooldowns.isOnCooldown(Registry.CODEX.get())) {
+                        QuickChant.add(Signs.MAGIC_SIGN);
+                        Networking.sendToServer(new AttemptCastPacket(Minecraft.getInstance().player, QuickChant.getChant()));
+                        AttributeInstance cdr = entity.getAttribute(AttributeRegistry.COOLDOWN_REDUCTION.get());
+                        entity.getCooldowns().addCooldown(entity.getItemInHand(InteractionHand.MAIN_HAND).getItem(), (int) (5 * (1 - (cdr.getValue() - 1))));
+                        QuickChant.clear();
+                    }
+                    event.setSwingHand(false);
+                    event.setCanceled(true);
+                } else if (entity.getItemInHand(InteractionHand.MAIN_HAND).getItem() instanceof InstrumentItem iItem) {
+                    ItemCooldowns cooldowns = entity.getCooldowns();
+                    if (!cooldowns.isOnCooldown(iItem)) {
+                        aster.amo.erosianmagic.net.Networking.sendToServer(new SongPacket(new ResourceLocation("erosianmagic", "guiding_bolt")));
+                        AttributeInstance cdr = entity.getAttribute(AttributeRegistry.COOLDOWN_REDUCTION.get());
+                        entity.getCooldowns().addCooldown(iItem, (int) (30 * (1 - (cdr.getValue() - 1))));
+                    }
                     event.setSwingHand(false);
                     event.setCanceled(true);
                 }
+
             }
         }
 

@@ -56,7 +56,7 @@ public class Song {
             return false;
         }
         for(int i = 0; i < notes.size(); i++){
-            if(!notes.get(i).isInTime(song.getNotes().get(i).interval().time(), fudge)){
+            if(!notes.get(i).isInTime(song.getNotes().get(i).interval().time(), fudge) || notes.get(i).index() != song.getNotes().get(i).index()){
                 return false;
             }
         }

@@ -1,4 +1,4 @@
-package aster.amo.erosianmagic.witch.spellsnspellbooks.spells;
+package aster.amo.erosianmagic.spellsnspellbooks.spells;
 
 import aster.amo.erosianmagic.ErosianMagic;
 import aster.amo.erosianmagic.registry.MobEffectRegistry;

@@ -8,9 +8,9 @@ import elucent.eidolon.registries.Spells;
 import io.redspace.ironsspellbooks.api.registry.SpellRegistry;
 import net.minecraft.resources.ResourceLocation;
 
-import static aster.amo.erosianmagic.witch.spellsnspellbooks.SpellRegistry.HEXBLOOD_SPELL;
+import static aster.amo.erosianmagic.spellsnspellbooks.SpellRegistry.HEXBLOOD_SPELL;
 
-// TODO: Possible JSON-ify this?
+// TODO: Implement "Chant Power" attribute
 public class ChantRegistry {
 
     public static final Spell MAGIC_MISSILE = Spells.register(new CastingSpell(new ResourceLocation("erosianmagic", "magic_missile"), Deities.DARK_DEITY, SpellRegistry.MAGIC_MISSILE_SPELL, 1, 0.1f, Signs.MAGIC_SIGN));
