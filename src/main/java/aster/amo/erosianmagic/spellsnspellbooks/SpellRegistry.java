@@ -3,6 +3,7 @@ package aster.amo.erosianmagic.spellsnspellbooks;
 import aster.amo.erosianmagic.ErosianMagic;
 import aster.amo.erosianmagic.spellsnspellbooks.spells.BreatheEasySpell;
 import aster.amo.erosianmagic.spellsnspellbooks.spells.HexbloodSpell;
+import aster.amo.erosianmagic.spellsnspellbooks.spells.MantleOfInspirationSpell;
 import aster.amo.erosianmagic.spellsnspellbooks.spells.PsychicScreamSpell;
 import io.redspace.ironsspellbooks.api.spells.AbstractSpell;
 import net.minecraftforge.eventbus.api.IEventBus;
@@ -23,4 +24,5 @@ public class SpellRegistry {
     public static final RegistryObject<AbstractSpell> HEXBLOOD_SPELL = registerSpell(new HexbloodSpell());
     public static final RegistryObject<AbstractSpell> PSYCHICSCREAM_SPELL = registerSpell(new PsychicScreamSpell());
     public static final RegistryObject<AbstractSpell> BREATHE_EASY = registerSpell(new BreatheEasySpell());
+    public static final RegistryObject<AbstractSpell> MANTLE_OF_INSPIRATION = registerSpell(new MantleOfInspirationSpell());
 }

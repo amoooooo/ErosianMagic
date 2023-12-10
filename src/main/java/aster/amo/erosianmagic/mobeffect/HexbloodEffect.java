@@ -1,4 +1,4 @@
-package aster.amo.erosianmagic.witch.mobeffect;
+package aster.amo.erosianmagic.mobeffect;
 
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectCategory;

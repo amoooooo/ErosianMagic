@@ -1,5 +1,6 @@
 package aster.amo.erosianmagic.witch.eidolon.spells;
 
+import aster.amo.erosianmagic.registry.AttributeRegistry;
 import elucent.eidolon.api.altar.AltarInfo;
 import elucent.eidolon.api.deity.Deity;
 import elucent.eidolon.api.spells.Sign;
@@ -16,6 +17,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
+import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.common.util.LazyOptional;
@@ -74,7 +76,11 @@ public class CastingSpell extends StaticSpell {
     }
 
     protected int getLevel(Level level, Player player, int minLevel, AbstractSpell spell) {
-        // level = devotion mod spell max level
+        AttributeInstance songPower = player.getAttribute(AttributeRegistry.SONG_POWER.get());
+        if(songPower != null){
+            int spellLevel = Math.max((int) Math.floor(songPower.getValue()), spell.getMinLevel());
+            return spellLevel;
+        }
         return (int)Math.ceil(getDevotion(level, player) % spell.getMaxLevel()) + minLevel;
     }
 
