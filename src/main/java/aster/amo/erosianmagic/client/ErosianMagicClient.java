@@ -1,5 +1,6 @@
 package aster.amo.erosianmagic.client;
 
+import aster.amo.erosianmagic.Config;
 import aster.amo.erosianmagic.bard.IBard;
 import aster.amo.erosianmagic.bard.song.SongPacket;
 import aster.amo.erosianmagic.particle.ParticleRegistry;
@@ -80,6 +81,7 @@ public class ErosianMagicClient {
         @SubscribeEvent
         public static void registerEntityRenderers(EntityRenderersEvent.RegisterRenderers event) {
             event.registerEntityRenderer(EntityRegistry.AOE_EFFECT.get(), NoopRenderer::new);
+            event.registerEntityRenderer(EntityRegistry.FAERIE_FIRE_AOE.get(), NoopRenderer::new);
         }
     }
 
@@ -216,7 +218,7 @@ public class ErosianMagicClient {
                 if(Minecraft.getInstance().level == null) return;
                 QuickChant.validateChant();
                 ItemStack stack = Minecraft.getInstance().player.getItemInHand(InteractionHand.MAIN_HAND);
-                if(Minecraft.getInstance().level.getGameTime() - lastCombatTime < 100) {
+                if(Minecraft.getInstance().level.getGameTime() - lastCombatTime < 100 && Config.autoThirdPerson) {
                     Minecraft.getInstance().options.setCameraType(CameraType.THIRD_PERSON_BACK);
                     Minecraft.getInstance().options.setCameraType(CameraType.THIRD_PERSON_FRONT);
                 }

@@ -1,6 +1,9 @@
 package aster.amo.erosianmagic;
 
 import aster.amo.erosianmagic.bard.IBard;
+import aster.amo.erosianmagic.cleric.ICleric;
+import aster.amo.erosianmagic.cleric.PrayerRegistry;
+import aster.amo.erosianmagic.cleric.chapel.IWorshipper;
 import aster.amo.erosianmagic.net.CombatTimerPacket;
 import aster.amo.erosianmagic.net.Networking;
 import aster.amo.erosianmagic.particle.ParticleRegistry;
@@ -24,6 +27,7 @@ import net.minecraft.commands.arguments.EntityArgument;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.entity.npc.Villager;
 import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.event.AttachCapabilitiesEvent;
 import net.minecraftforge.event.RegisterCommandsEvent;
@@ -51,6 +55,7 @@ public class ErosianMagic {
         IEventBus modEventBus = FMLJavaModLoadingContext.get().getModEventBus();
         ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, Config.SPEC);
         ChantRegistry.init();
+        PrayerRegistry.init();
         SpellRegistry.init(modEventBus);
         MobEffectRegistry.MOB_EFFECT_DEFERRED_REGISTER.register(modEventBus);
         ParticleRegistry.register(modEventBus);
@@ -79,6 +84,10 @@ public class ErosianMagic {
         public static void attachEntityCaps(AttachCapabilitiesEvent<Entity> event) {
             if (event.getObject() instanceof Player) {
                 event.addCapability(new ResourceLocation(MODID, "bard"), new IBard.Provider());
+                event.addCapability(new ResourceLocation(MODID, "cleric"), new ICleric.Provider());
+            }
+            if(event.getObject() instanceof Villager) {
+                event.addCapability(new ResourceLocation(MODID, "worshipper"), new IWorshipper.Provider());
             }
         }
 
@@ -104,11 +113,17 @@ public class ErosianMagic {
             if (!event.player.level().isClientSide) {
                 Player player = event.player;
                 player.getCapability(IBard.INSTANCE).ifPresent((bard) -> {
-                    if (bard.isBard()) {
+                    if (bard.isChosenClass()) {
                         bard.tick(player);
                         if(MagicData.getPlayerMagicData(player).isCasting()) {
                             bard.setInspirationTime(120);
                         }
+                    }
+                });
+                player.getCapability(ICleric.INSTANCE).ifPresent((cleric) -> {
+                    if (cleric.isChosenClass()) {
+                        if(cleric.hasChapel())
+                            cleric.getChapel().tick(player.level());
                     }
                 });
             }
@@ -134,8 +149,28 @@ public class ErosianMagic {
                                             .executes((commandSource) -> {
                                                 Player player = EntityArgument.getPlayer(commandSource, "player");
                                                 player.getCapability(IBard.INSTANCE).ifPresent((bard) -> {
-                                                    bard.setBard(true);
+                                                    bard.setChosenClass(true);
                                                     bard.sync(player);
+                                                });
+                                                player.getCapability(ICleric.INSTANCE).ifPresent((cleric) -> {
+                                                    cleric.setChosenClass(false);
+                                                    cleric.sync(player);
+                                                });
+                                                return 1;
+                                            })
+                                    )
+                            )
+                            .then(Commands.literal("cleric")
+                                    .then(Commands.argument("player", EntityArgument.player())
+                                            .executes((commandSource) -> {
+                                                Player player = EntityArgument.getPlayer(commandSource, "player");
+                                                player.getCapability(IBard.INSTANCE).ifPresent((bard) -> {
+                                                    bard.setChosenClass(false);
+                                                    bard.sync(player);
+                                                });
+                                                player.getCapability(ICleric.INSTANCE).ifPresent((cleric) -> {
+                                                    cleric.setChosenClass(true);
+                                                    cleric.sync(player);
                                                 });
                                                 return 1;
                                             })

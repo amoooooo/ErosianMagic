@@ -10,11 +10,9 @@ import io.redspace.ironsspellbooks.api.spells.*;
 import io.redspace.ironsspellbooks.api.util.AnimationHolder;
 import io.redspace.ironsspellbooks.api.util.Utils;
 import io.redspace.ironsspellbooks.capabilities.magic.CastTargetingData;
-import io.redspace.ironsspellbooks.entity.spells.root.RootEntity;
 import io.redspace.ironsspellbooks.network.spell.ClientboundSyncTargetingData;
 import io.redspace.ironsspellbooks.setup.Messages;
 import io.redspace.ironsspellbooks.util.Log;
-import io.redspace.ironsspellbooks.util.ModTags;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
@@ -28,15 +26,14 @@ import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.EntityHitResult;
-import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 import java.util.Optional;
 
 @AutoSpellConfig
-public class MantleOfInspirationSpell extends AbstractSpell {
-    private final ResourceLocation spellId = new ResourceLocation(ErosianMagic.MODID, "mantle_of_inspiration");
+public class WardingWindSpell extends AbstractSpell {
+    private final ResourceLocation spellId = new ResourceLocation(ErosianMagic.MODID, "warding_wind");
 
     @Override
     public List<MutableComponent> getUniqueInfo(int spellLevel, LivingEntity caster) {
@@ -45,7 +42,7 @@ public class MantleOfInspirationSpell extends AbstractSpell {
         );
     }
 
-    public MantleOfInspirationSpell() {
+    public WardingWindSpell() {
         this.manaCostPerLevel = 10;
         this.baseSpellPower = 30;
         this.spellPowerPerLevel = 10;
@@ -95,7 +92,9 @@ public class MantleOfInspirationSpell extends AbstractSpell {
                 if (Log.SPELL_DEBUG) {
                     IronsSpellbooks.LOGGER.debug("RootSpell.onCast.2 targetEntity:{}", target);
                 }
-                entity.addEffect(new MobEffectInstance(MobEffectRegistry.MANTLE_OF_INSPIRATION.get(), 20 * 60, spellLevel));
+                if(Utils.shouldHealEntity(entity, target)){
+                    entity.addEffect(new MobEffectInstance(MobEffectRegistry.WARDING_WIND.get(), 20 * 60, spellLevel));
+                }
             }
         }
         super.onCast(level, spellLevel, entity, playerMagicData);

@@ -1,9 +1,7 @@
 package aster.amo.erosianmagic.registry;
 
 import aster.amo.erosianmagic.ErosianMagic;
-import aster.amo.erosianmagic.mobeffect.BardicInspirationEffect;
-import aster.amo.erosianmagic.mobeffect.HexbloodEffect;
-import aster.amo.erosianmagic.mobeffect.MantleOfInspirationEffect;
+import aster.amo.erosianmagic.mobeffect.*;
 import elucent.eidolon.registries.EidolonAttributes;
 import elucent.eidolon.registries.Registry;
 import io.redspace.ironsspellbooks.api.registry.AttributeRegistry;
@@ -32,5 +30,17 @@ public class MobEffectRegistry {
             .addAttributeModifier(AttributeRegistry.MANA_REGEN.get(), "87733c95-909c-4fc3-9780-e35a89565666", 0.50f, AttributeModifier.Operation.MULTIPLY_BASE)
     );
 
+    public static final RegistryObject<MobEffect> FAERIE_FIRE = MOB_EFFECT_DEFERRED_REGISTER.register("faerie_fire", () -> new FaerieFireEffect(MobEffectCategory.BENEFICIAL, 0xffff00)
+            .addAttributeModifier(Attributes.ARMOR, "87733c95-909c-4fc3-9780-e35a89565666", -0.2f, AttributeModifier.Operation.MULTIPLY_BASE)
+    );
+
     public static final RegistryObject<MobEffect> MANTLE_OF_INSPIRATION = MOB_EFFECT_DEFERRED_REGISTER.register("mantle_of_inspiration", () -> new MantleOfInspirationEffect(MobEffectCategory.BENEFICIAL, 3311322));
+
+    public static final RegistryObject<MobEffect> IRRISISTIBLE_DANCE = MOB_EFFECT_DEFERRED_REGISTER.register("irresistible_dance", () -> new IrresistibleDanceEffect(MobEffectCategory.HARMFUL, 0x00ff00)
+            .addAttributeModifier(Attributes.MOVEMENT_SPEED, "87733c95-909c-4fc3-9780-e35a89565666", -1.0f, AttributeModifier.Operation.MULTIPLY_TOTAL));
+
+    public static final RegistryObject<MobEffect> WARDING_WIND = MOB_EFFECT_DEFERRED_REGISTER.register("warding_wind", () -> new WardingWindEffect(MobEffectCategory.BENEFICIAL, 0x00ff00));
+
+    public static final RegistryObject<MobEffect> CURSED = MOB_EFFECT_DEFERRED_REGISTER.register("cursed", () -> new CursedEffect(MobEffectCategory.HARMFUL, 0x00ff00)
+            .addAttributeModifier(Attributes.ATTACK_DAMAGE, "87733c95-909c-4fc3-9780-e35a89565666", -0.1f, AttributeModifier.Operation.MULTIPLY_TOTAL));
 }

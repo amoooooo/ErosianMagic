@@ -74,7 +74,7 @@ public class SongRegistry {
                     )),
                     1.0f,
                     Song.Pitch.C2,
-                    0.25f,
+                    0.1f,
                     (player, perfect) -> {
                         ((ServerLevel)player.level()).sendParticles(ParticleTypes.NOTE, player.getX(), player.getY() + 1.0, player.getZ(), 10, 0.25, 0.25, 0.25, 0.0);
                         int spellLevel = 1;
@@ -109,7 +109,7 @@ public class SongRegistry {
                     )),
                     1.0f,
                     Song.Pitch.C2,
-                    0.25f,
+                    0.1f,
                     (player, perfect) -> {
                         ((ServerLevel)player.level()).sendParticles(ParticleTypes.NOTE, player.getX(), player.getY() + 1.0, player.getZ(), 10, 0.25, 0.25, 0.25, 0.0);
                         int spellLevel = 1;
@@ -152,7 +152,7 @@ public class SongRegistry {
                     )),
                     1.0f,
                     Song.Pitch.C2,
-                    0.25f,
+                    0.1f,
                     (player, perfect) -> {
                         ((ServerLevel)player.level()).sendParticles(ParticleTypes.NOTE, player.getX(), player.getY() + 1.0, player.getZ(), 10, 0.25, 0.25, 0.25, 0.0);
                         int spellLevel = 1;
@@ -189,7 +189,7 @@ public class SongRegistry {
                     )),
                     1.0f,
                     Song.Pitch.C2,
-                    0.25f,
+                    0.1f,
                     (player, perfect) -> {
                         ((ServerLevel)player.level()).sendParticles(ParticleTypes.NOTE, player.getX(), player.getY() + 1.0, player.getZ(), 10, 0.25, 0.25, 0.25, 0.0);
                         int spellLevel = 1;
@@ -226,11 +226,48 @@ public class SongRegistry {
                     )),
                     1.0f,
                     Song.Pitch.C2,
-                    0.25f,
+                    0.1f,
                     (player, perfect) -> {
                         ((ServerLevel)player.level()).sendParticles(ParticleTypes.NOTE, player.getX(), player.getY() + 1.0, player.getZ(), 10, 0.25, 0.25, 0.25, 0.0);
                         int spellLevel = 1;
                         AbstractSpell spell = SpellRegistry.ROOT_SPELL.get();
+                        AttributeInstance songPower = player.getAttribute(AttributeRegistry.SONG_POWER.get());
+                        if(songPower != null) {
+                            spellLevel = Math.max((int) Math.floor(songPower.getValue()), spell.getMinLevel());
+                        }
+                        if(perfect){
+                            spellLevel = Math.min(spellLevel + 1, spell.getMaxLevel());
+                            for(int i = 0; i < 10; i++){
+                                Vec3 particlePos = new Vec3(
+                                        player.getX() + (Math.random() * 2.0 - 1.0),
+                                        player.getY() + (Math.random() * 2.0 - 1.0),
+                                        player.getZ() + (Math.random() * 2.0 - 1.0)
+                                );
+                                ((ServerLevel) player.level()).sendParticles(ParticleTypes.END_ROD, particlePos.x(), particlePos.y(), particlePos.z(), 1, 0.25, 0.25, 0.25, 0.0);
+                            }
+                            ((ServerLevel) player.level()).playSound(null, player.getX(), player.getY(), player.getZ(), SoundEvents.ALLAY_ITEM_GIVEN, player.getSoundSource(), 1.0f, 2.0f);
+                        }
+                        spell.attemptInitiateCast(player.getItemInHand(InteractionHand.MAIN_HAND), spellLevel, player.level(), player, CastSource.SPELLBOOK, true);
+                    }
+            )
+    );
+
+    public static final Song HEAT_METAL = register(
+            new ResourceLocation("erosianmagic", "heat_metal"),
+            new Song(
+                    new ArrayList<Note>(List.of(
+                            new Note(8, Interval.ZERO, Song.Pitch.C2),
+                            new Note(10, Interval.QUARTER, Song.Pitch.Db),
+                            new Note(11, Interval.QUARTER, Song.Pitch.C2),
+                            new Note(12, Interval.QUARTER, Song.Pitch.Db)
+                    )),
+                    1.0f,
+                    Song.Pitch.C2,
+                    0.1f,
+                    (player, perfect) -> {
+                        ((ServerLevel)player.level()).sendParticles(ParticleTypes.NOTE, player.getX(), player.getY() + 1.0, player.getZ(), 10, 0.25, 0.25, 0.25, 0.0);
+                        int spellLevel = 1;
+                        AbstractSpell spell = aster.amo.erosianmagic.spellsnspellbooks.SpellRegistry.HEAT_METAL.get();
                         AttributeInstance songPower = player.getAttribute(AttributeRegistry.SONG_POWER.get());
                         if(songPower != null) {
                             spellLevel = Math.max((int) Math.floor(songPower.getValue()), spell.getMinLevel());

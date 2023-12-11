@@ -47,16 +47,6 @@ public class Bard implements IBard, INBTSerializable<CompoundTag> {
     }
 
     @Override
-    public boolean isBard() {
-        return isBard;
-    }
-
-    @Override
-    public void setBard(boolean bard) {
-        isBard = bard;
-    }
-
-    @Override
     public void tick(Player bard) {
         if(inspirationTime > 0) {
             inspiring = true;
@@ -74,7 +64,7 @@ public class Bard implements IBard, INBTSerializable<CompoundTag> {
         if(inspiring) {
             // get all nearby players within 8 blocks
             List<Player> players = bard.level().getEntitiesOfClass(Player.class, bard.getBoundingBox().inflate(12));
-            Party party = PartyClientApiImpl.API.getPlayerParty(Minecraft.getInstance().player.getUUID());
+            Party party = PartyClientApiImpl.API.getPlayerParty(bard.getUUID());
             if(party == null) {
                 players.forEach(player -> {
                     player.addEffect(new MobEffectInstance(MobEffectRegistry.BARDIC_INSPIRATION.get(), 120, 0, false, false, true));
@@ -119,5 +109,15 @@ public class Bard implements IBard, INBTSerializable<CompoundTag> {
         inspirationTime = nbt.getInt("inspirationTime");
         inspiring = nbt.getBoolean("inspiring");
         entityId = nbt.getInt("entityId");
+    }
+
+    @Override
+    public void setChosenClass(boolean isClass) {
+        isBard = isClass;
+    }
+
+    @Override
+    public boolean isChosenClass() {
+        return isBard;
     }
 }

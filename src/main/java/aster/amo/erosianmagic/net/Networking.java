@@ -23,6 +23,8 @@ public class Networking {
         INSTANCE.registerMessage(id++, CombatTimerPacket.class, CombatTimerPacket::encode, CombatTimerPacket::decode, CombatTimerPacket::consume, Optional.of(NetworkDirection.PLAY_TO_CLIENT));
         INSTANCE.registerMessage(id++, SongPacket.class, SongPacket::encode, SongPacket::decode, SongPacket::consume, Optional.of(NetworkDirection.PLAY_TO_SERVER));
         INSTANCE.registerMessage(id++, BardSyncPacket.class, BardSyncPacket::encode, BardSyncPacket::decode, BardSyncPacket::handle, Optional.of(NetworkDirection.PLAY_TO_CLIENT));
+        INSTANCE.registerMessage(id++, ClericSyncPacket.class, ClericSyncPacket::encode, ClericSyncPacket::decode, ClericSyncPacket::handle, Optional.of(NetworkDirection.PLAY_TO_CLIENT));
+        INSTANCE.registerMessage(id++, ClientboundSyncMultiTargetingData.class, ClientboundSyncMultiTargetingData::encode, ClientboundSyncMultiTargetingData::decode, ClientboundSyncMultiTargetingData::handle, Optional.of(NetworkDirection.PLAY_TO_CLIENT));
     }
 
     public static <MSG> void sendToDimension(Level world, MSG msg, ResourceKey<Level> dimension) {

@@ -15,5 +15,19 @@
   "erosianmagic.codex.category.mystic_arts": "Mystic Arts",
   "eidolon.codex.category.mystic_arts": "Mystic Arts",
   "attribute.erosianmagic.song_power": "Song Power",
-  "attribute.erosianmagic.chant_power": "Chant Power"
+  "attribute.erosianmagic.chant_power": "Chant Power",
+  "effect.erosianmagic.mantle_of_inspiration": "Mantle of Inspiration",
+  "effect.erosianmagic.warding_wind": "Warding Wind",
+  "effect.erosianmagic.faerie_fire": "Faerie Fire",
+  "effect.erosianmagic.bardic_inspiration": "Bardic Inspiration",
+  "spell.erosianmagic.faerie_fire": "Faerie Fire",
+    "spell.erosianmagic.mantle_of_inspiration": "Mantle of Inspiration",
+    "spell.erosianmagic.warding_wind": "Warding Wind",
+  "spell.erosianmagic.mending": "Mending",
+  "spell.erosianmagic.heat_metal": "Heat Metal",
+  "spell.erosianmagic.breathe_easy": "Breathe Easy",
+  "spell.erosianmagic.mislead": "Mislead",
+  "spell.erosianmagic.irresistible_dance": "Irresistible Dance",
+  "effect.erosianmagic.cursed": "Cursed",
+  "spell.erosianmagic.bestow_curse": "Bestow Curse"
 }

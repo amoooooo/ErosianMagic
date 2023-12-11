@@ -1,6 +1,7 @@
 package aster.amo.erosianmagic.registry;
 
 import aster.amo.erosianmagic.ErosianMagic;
+import aster.amo.erosianmagic.spellsnspellbooks.spells.entity.FaerieFireAoe;
 import aster.amo.erosianmagic.util.AoeEffectEntity;
 import io.redspace.ironsspellbooks.IronsSpellbooks;
 import io.redspace.ironsspellbooks.entity.spells.magic_missile.MagicMissileProjectile;
@@ -22,4 +23,9 @@ public class EntityRegistry {
             .sized(4f, .8f)
             .clientTrackingRange(64)
             .build(new ResourceLocation(ErosianMagic.MODID, "aoe_effect").toString()));
+
+    public static final RegistryObject<EntityType<FaerieFireAoe>> FAERIE_FIRE_AOE = ENTITIES.register("faerie_fire_aoe", () -> EntityType.Builder.<FaerieFireAoe>of(FaerieFireAoe::new, MobCategory.MISC)
+            .sized(4f, .8f)
+            .clientTrackingRange(64)
+            .build(new ResourceLocation(ErosianMagic.MODID, "faerie_fire_aoe").toString()));
 }

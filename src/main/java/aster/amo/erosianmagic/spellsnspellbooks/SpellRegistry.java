@@ -1,10 +1,7 @@
 package aster.amo.erosianmagic.spellsnspellbooks;
 
 import aster.amo.erosianmagic.ErosianMagic;
-import aster.amo.erosianmagic.spellsnspellbooks.spells.BreatheEasySpell;
-import aster.amo.erosianmagic.spellsnspellbooks.spells.HexbloodSpell;
-import aster.amo.erosianmagic.spellsnspellbooks.spells.MantleOfInspirationSpell;
-import aster.amo.erosianmagic.spellsnspellbooks.spells.PsychicScreamSpell;
+import aster.amo.erosianmagic.spellsnspellbooks.spells.*;
 import io.redspace.ironsspellbooks.api.spells.AbstractSpell;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.registries.DeferredRegister;
@@ -25,4 +22,11 @@ public class SpellRegistry {
     public static final RegistryObject<AbstractSpell> PSYCHICSCREAM_SPELL = registerSpell(new PsychicScreamSpell());
     public static final RegistryObject<AbstractSpell> BREATHE_EASY = registerSpell(new BreatheEasySpell());
     public static final RegistryObject<AbstractSpell> MANTLE_OF_INSPIRATION = registerSpell(new MantleOfInspirationSpell());
+    public static final RegistryObject<AbstractSpell> HEAT_METAL = registerSpell(new HeatMetalSpell());
+    public static final RegistryObject<AbstractSpell> FAERIE_FIRE = registerSpell(new FaerieFireSpell());
+    public static final RegistryObject<AbstractSpell> MENDING = registerSpell(new MendingSpell());
+    public static final RegistryObject<AbstractSpell> IRRESISTIBLE_DANCE = registerSpell(new IrresistibleDanceSpell());
+    public static final RegistryObject<AbstractSpell> WARDING_WIND = registerSpell(new WardingWindSpell());
+    public static final RegistryObject<AbstractSpell> MISLEAD = registerSpell(new MisleadSpell());
+    public static final RegistryObject<AbstractSpell> BESTOW_CURSE = registerSpell(new BestowCurseSpell());
 }
