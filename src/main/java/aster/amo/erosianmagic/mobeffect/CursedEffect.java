@@ -32,6 +32,10 @@ public class CursedEffect extends ExtendedMobEffect {
 
     @Override
     public void afterIncomingAttack(LivingEntity entity, MobEffectInstance effectInstance, DamageSource source, float amount) {
+        if(entity.level().isClientSide) {
+            super.afterIncomingAttack(entity, effectInstance, source, amount);
+            return;
+        }
         if(source.getEntity() instanceof LivingEntity le) {
             Holder<DamageType> type = entity.level().registryAccess().registry(Registries.DAMAGE_TYPE).flatMap(registry -> registry.getHolder(ISSDamageTypes.ELDRITCH_MAGIC)).get();
             entity.hurt(new DamageSource(type, le), amount * 0.2f);
@@ -51,6 +55,10 @@ public class CursedEffect extends ExtendedMobEffect {
 
     @Override
     public void tick(LivingEntity entity, @Nullable MobEffectInstance effectInstance, int amplifier) {
+        if(entity.level().isClientSide) {
+            super.tick(entity, effectInstance, amplifier);
+            return;
+        }
         for(int i = 0; i < 500; i++){
             float angle = (float) (Math.random() * 2 * Math.PI);
             Vec3 pos = entity.position().add(Math.cos(angle), 0, Math.sin(angle));

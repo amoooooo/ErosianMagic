@@ -2,8 +2,10 @@ package aster.amo.erosianmagic.net;
 
 import aster.amo.erosianmagic.bard.IBard;
 import aster.amo.erosianmagic.cleric.ICleric;
+import net.minecraft.client.Minecraft;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.common.util.INBTSerializable;
 import net.minecraftforge.network.NetworkEvent;
@@ -33,7 +35,10 @@ public class ClericSyncPacket {
         context.get().enqueueWork(() -> {
             Player player = context.get().getSender().level().getPlayerByUUID(object.uuid);
             if(player != null) {
-                player.getCapability(ICleric.INSTANCE, null).ifPresent((k) -> ((INBTSerializable<CompoundTag>) k).deserializeNBT(object.tag));
+                player.getCapability(ICleric.INSTANCE).ifPresent((k) -> {
+                    ((INBTSerializable<CompoundTag>) k).deserializeNBT(object.tag);
+                    Minecraft.getInstance().player.sendSystemMessage(Component.nullToEmpty("isChosenClass: " + k.isChosenClass()));
+                });
             }
         });
         context.get().setPacketHandled(true);

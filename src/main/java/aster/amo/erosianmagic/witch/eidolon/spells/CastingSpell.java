@@ -50,7 +50,7 @@ public class CastingSpell extends StaticSpell {
     }
 
     @Override
-    public int getCastTime() {
+    public int getDelay() {
         return castTime;
     }
 
@@ -59,7 +59,7 @@ public class CastingSpell extends StaticSpell {
         if(spell != null) {
             if(!level.isClientSide) {
                 player.getCapability(ISoul.INSTANCE, (Direction)null).ifPresent((soul) -> {
-                    float cost = (float) (1.0f/spell.get().getMaxLevel()) * 10.0f * signs().length * costModifier;
+                    float cost = (float) (1.0f/spell.get().getMaxLevel()) * 10.0f * signs.toArray().length * costModifier;
                     if(!soul.hasMagic() || soul.getMagic() < cost) return;
                     int spellLevel = getLevel(level, player, 1, this.spell.get());
                     this.spell.get().attemptInitiateCast(player.getItemInHand(InteractionHand.MAIN_HAND), spellLevel, level, (ServerPlayer) player, CastSource.SCROLL, false);

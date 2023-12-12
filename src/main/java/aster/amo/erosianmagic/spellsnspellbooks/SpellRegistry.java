@@ -29,4 +29,10 @@ public class SpellRegistry {
     public static final RegistryObject<AbstractSpell> WARDING_WIND = registerSpell(new WardingWindSpell());
     public static final RegistryObject<AbstractSpell> MISLEAD = registerSpell(new MisleadSpell());
     public static final RegistryObject<AbstractSpell> BESTOW_CURSE = registerSpell(new BestowCurseSpell());
+    public static final RegistryObject<AbstractSpell> BEACON_OF_HOPE = registerSpell(new BeaconOfHopeSpell());
+    public static final RegistryObject<AbstractSpell> SACRED_FLAME = registerSpell(new SacredFlameSpell());
+    public static final RegistryObject<AbstractSpell> HEALING_WORD = registerSpell(new HealingWordSpell());
+    public static final RegistryObject<AbstractSpell> PRAYER_OF_HEALING = registerSpell(new PrayerOfHealingSpell());
+    public static final RegistryObject<AbstractSpell> TOLL_THE_DEAD = registerSpell(new TollTheDeadSpell());
+    public static final RegistryObject<AbstractSpell> WARDING_BOND = registerSpell(new WardingBondSpell());
 }

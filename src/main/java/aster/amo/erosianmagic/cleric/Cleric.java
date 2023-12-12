@@ -1,11 +1,9 @@
 package aster.amo.erosianmagic.cleric;
 
-import aster.amo.erosianmagic.cleric.chapel.Chapel;
-import aster.amo.erosianmagic.net.BardSyncPacket;
+import aster.amo.erosianmagic.cleric.chapel.Temple;
 import aster.amo.erosianmagic.net.ClericSyncPacket;
 import aster.amo.erosianmagic.net.Networking;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.ListTag;
 import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.common.util.INBTSerializable;
 
@@ -15,10 +13,13 @@ import java.util.UUID;
 public class Cleric implements ICleric, INBTSerializable<CompoundTag> {
     private float prayerPower = 0;
     private long sermonCooldown = 0;
-    private Chapel chapel;
+    private Temple temple;
     private boolean chosenClass = false;
     @Override
     public float getPrayerPower() {
+        if(hasTemple()) {
+            prayerPower = temple.getTempleLevel();
+        }
         return prayerPower;
     }
 
@@ -29,17 +30,17 @@ public class Cleric implements ICleric, INBTSerializable<CompoundTag> {
 
     @Override
     public void addWorshipper(UUID uuid) {
-        chapel.addWorshipper(uuid);
+        temple.addWorshipper(uuid);
     }
 
     @Override
     public void removeWorshipper(UUID uuid) {
-        chapel.removeWorshipper(uuid);
+        temple.removeWorshipper(uuid);
     }
 
     @Override
     public List<UUID> getWorshippers() {
-        return chapel.getWorshippers();
+        return temple.getWorshippers();
     }
 
     @Override
@@ -58,18 +59,18 @@ public class Cleric implements ICleric, INBTSerializable<CompoundTag> {
     }
 
     @Override
-    public Chapel getChapel() {
-        return chapel;
+    public Temple getTemple() {
+        return temple;
     }
 
     @Override
-    public void setChapel(Chapel chapel) {
-        this.chapel = chapel;
+    public void setTemple(Temple temple) {
+        this.temple = temple;
     }
 
     @Override
-    public boolean hasChapel() {
-        return chapel != null;
+    public boolean hasTemple() {
+        return temple != null;
     }
 
     @Override
@@ -88,8 +89,8 @@ public class Cleric implements ICleric, INBTSerializable<CompoundTag> {
         nbt.putFloat("prayerPower", prayerPower);
         nbt.putLong("sermonCooldown", sermonCooldown);
         nbt.putBoolean("chosenClass", chosenClass);
-        if(chapel != null){
-            nbt.put("chapel", chapel.toNbt());
+        if(temple != null){
+            nbt.put("temple", temple.toNbt());
         }
         return nbt;
     }
@@ -99,8 +100,8 @@ public class Cleric implements ICleric, INBTSerializable<CompoundTag> {
         prayerPower = nbt.getFloat("prayerPower");
         sermonCooldown = nbt.getLong("sermonCooldown");
         chosenClass = nbt.getBoolean("chosenClass");
-        if(nbt.contains("chapel"))
-            chapel = Chapel.fromNbt(nbt.getCompound("chapel"));
+        if(nbt.contains("temple"))
+            temple = Temple.fromNbt(nbt.getCompound("temple"));
     }
 
     @Override

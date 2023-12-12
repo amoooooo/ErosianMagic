@@ -29,5 +29,8 @@
   "spell.erosianmagic.mislead": "Mislead",
   "spell.erosianmagic.irresistible_dance": "Irresistible Dance",
   "effect.erosianmagic.cursed": "Cursed",
-  "spell.erosianmagic.bestow_curse": "Bestow Curse"
+  "spell.erosianmagic.bestow_curse": "Bestow Curse",
+  "spell.erosianmagic.beacon_of_hope": "Beacon of Hope",
+  "effect.erosianmagic.hopeful": "Hopeful",
+  "effect.erosianmagic.beacon_of_hope": "Beacon of Hope"
 }

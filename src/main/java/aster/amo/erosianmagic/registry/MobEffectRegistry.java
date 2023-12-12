@@ -43,4 +43,13 @@ public class MobEffectRegistry {
 
     public static final RegistryObject<MobEffect> CURSED = MOB_EFFECT_DEFERRED_REGISTER.register("cursed", () -> new CursedEffect(MobEffectCategory.HARMFUL, 0x00ff00)
             .addAttributeModifier(Attributes.ATTACK_DAMAGE, "87733c95-909c-4fc3-9780-e35a89565666", -0.1f, AttributeModifier.Operation.MULTIPLY_TOTAL));
+
+    public static final RegistryObject<MobEffect> MANA_REGEN = MOB_EFFECT_DEFERRED_REGISTER.register("mana_regen", () -> new ManaRegenEffect(MobEffectCategory.BENEFICIAL, 0x00ff00)
+            .addAttributeModifier(AttributeRegistry.MANA_REGEN.get(), "87733c95-909c-4fc3-9780-e35a89565666", 0.10f, AttributeModifier.Operation.MULTIPLY_BASE));
+
+    public static final RegistryObject<MobEffect> BEACON_OF_HOPE = MOB_EFFECT_DEFERRED_REGISTER.register("beacon_of_hope", () -> new BeaconOfHopeEffect(MobEffectCategory.BENEFICIAL, 0x00ff00));
+    public static final RegistryObject<MobEffect> HOPEFUL = MOB_EFFECT_DEFERRED_REGISTER.register("hopeful", () -> new HopefulEffect(MobEffectCategory.BENEFICIAL, 0x00fff0));
+
+    public static final RegistryObject<MobEffect> WARDING_BOND = MOB_EFFECT_DEFERRED_REGISTER.register("warding_bond", () -> new WardingBondEffect(MobEffectCategory.BENEFICIAL, 0x00ff00));
+
 }

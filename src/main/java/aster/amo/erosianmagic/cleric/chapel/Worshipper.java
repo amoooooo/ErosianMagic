@@ -7,10 +7,16 @@ import net.minecraftforge.common.util.INBTSerializable;
 
 import java.util.UUID;
 
+/**
+ * TODO: Add a countdown to when the worshipper loses faith in the cleric. Sermons should reset this countdown.
+ */
 public class Worshipper implements IWorshipper, INBTSerializable<CompoundTag> {
     private UUID leader;
     private boolean canListen = true;
     Vec3 beforePosition;
+    Vec3 seatPosition;
+    float loseFaithChance = 0.0f;
+    long lastSermon = 0;
     @Override
     public void setLeader(UUID leader) {
         this.leader = leader;
@@ -48,6 +54,36 @@ public class Worshipper implements IWorshipper, INBTSerializable<CompoundTag> {
     }
 
     @Override
+    public Vec3 getSeatPosition() {
+        return seatPosition;
+    }
+
+    @Override
+    public void setSeatPosition(Vec3 seatPosition) {
+        this.seatPosition = seatPosition;
+    }
+
+    @Override
+    public float getLoseFaithChance() {
+        return loseFaithChance;
+    }
+
+    @Override
+    public void setLoseFaithChance(float loseFaithChance) {
+        this.loseFaithChance = loseFaithChance;
+    }
+
+    @Override
+    public void setLastSermon(long lastSermon) {
+        this.lastSermon = lastSermon;
+    }
+
+    @Override
+    public long getLastSermon() {
+        return lastSermon;
+    }
+
+    @Override
     public CompoundTag serializeNBT() {
         CompoundTag nbt = new CompoundTag();
         if(leader != null ) nbt.putUUID("leader", leader);
@@ -57,6 +93,12 @@ public class Worshipper implements IWorshipper, INBTSerializable<CompoundTag> {
             nbt.putFloat("beforeY", (float) beforePosition.y);
             nbt.putFloat("beforeZ", (float) beforePosition.z);
         }
+        if(seatPosition != null){
+            nbt.putFloat("seatX", (float) seatPosition.x);
+            nbt.putFloat("seatY", (float) seatPosition.y);
+            nbt.putFloat("seatZ", (float) seatPosition.z);
+        }
+        nbt.putFloat("loseFaithChance", loseFaithChance);
         return nbt;
     }
 
@@ -66,5 +108,8 @@ public class Worshipper implements IWorshipper, INBTSerializable<CompoundTag> {
         canListen = nbt.getBoolean("canListen");
         if(nbt.contains("beforeX"))
             beforePosition = new Vec3(nbt.getFloat("beforeX"), nbt.getFloat("beforeY"), nbt.getFloat("beforeZ"));
+        if(nbt.contains("seatX"))
+            seatPosition = new Vec3(nbt.getFloat("seatX"), nbt.getFloat("seatY"), nbt.getFloat("seatZ"));
+        loseFaithChance = nbt.getFloat("loseFaithChance");
     }
 }

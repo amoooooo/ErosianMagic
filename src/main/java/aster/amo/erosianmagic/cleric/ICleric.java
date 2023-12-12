@@ -1,6 +1,6 @@
 package aster.amo.erosianmagic.cleric;
 
-import aster.amo.erosianmagic.cleric.chapel.Chapel;
+import aster.amo.erosianmagic.cleric.chapel.Temple;
 import aster.amo.erosianmagic.util.IClass;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
@@ -47,9 +47,9 @@ public interface ICleric extends IClass {
     long getSermonCooldown();
     void setSermonCooldown(long cooldown);
     boolean isSermonCooldown();
-    Chapel getChapel();
-    void setChapel(Chapel chapel);
-    boolean hasChapel();
+    Temple getTemple();
+    void setTemple(Temple temple);
+    boolean hasTemple();
 
     @Override
     default String getClassName() {

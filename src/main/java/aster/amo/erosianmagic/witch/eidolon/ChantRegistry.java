@@ -13,7 +13,7 @@ import static aster.amo.erosianmagic.spellsnspellbooks.SpellRegistry.HEXBLOOD_SP
 // TODO: Implement "Chant Power" attribute
 public class ChantRegistry {
 
-    public static final Spell MAGIC_MISSILE = Spells.register(new CastingSpell(new ResourceLocation("erosianmagic", "magic_missile"), Deities.DARK_DEITY, SpellRegistry.MAGIC_MISSILE_SPELL, 1, 0.1f, Signs.MAGIC_SIGN));
+    public static final Spell MAGIC_MISSILE = Spells.register(new CastingSpell(new ResourceLocation("erosianmagic", "magic_missile"), Deities.DARK_DEITY, SpellRegistry.MAGIC_MISSILE_SPELL, 1, 0.1f, Signs.WICKED_SIGN));
     public static final Spell HEXBLOOD = Spells.register(new CastingSpell(new ResourceLocation("erosianmagic", "hexblood"), Deities.DARK_DEITY, HEXBLOOD_SPELL, 5, Signs.WICKED_SIGN, Signs.BLOOD_SIGN));
     public static final Spell RAY_OF_SIPHONING = Spells.register(new CastingSpell(new ResourceLocation("erosianmagic", "ray_of_siphoning"), Deities.DARK_DEITY, SpellRegistry.RAY_OF_SIPHONING_SPELL, 10, Signs.WICKED_SIGN, Signs.BLOOD_SIGN, Signs.BLOOD_SIGN));
     public static final Spell WITHER_SKULL = Spells.register(new CastingSpell(new ResourceLocation("erosianmagic", "wither_skull"), Deities.DARK_DEITY, SpellRegistry.WITHER_SKULL_SPELL, 15, Signs.WICKED_SIGN, Signs.DEATH_SIGN));

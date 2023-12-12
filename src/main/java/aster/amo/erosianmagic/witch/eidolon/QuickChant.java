@@ -41,7 +41,7 @@ public class QuickChant {
             return;
         }
         tickTime = 0;
-        if(Spells.find(new SignSequence(chant)) != null){
+        if(Spells.find(new SignSequence(chant), Minecraft.getInstance().level) != null){
             Networking.sendToServer(new AttemptCastPacket(Minecraft.getInstance().player, QuickChant.getChant()));
             clear();
         }

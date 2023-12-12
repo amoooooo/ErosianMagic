@@ -32,7 +32,7 @@ public class BardSyncPacket {
         context.get().enqueueWork(() -> {
             Player player = context.get().getSender().level().getPlayerByUUID(object.uuid);
             if(player != null) {
-                player.getCapability(IBard.INSTANCE, null).ifPresent((k) -> ((INBTSerializable<CompoundTag>) k).deserializeNBT(object.tag));
+                player.getCapability(IBard.INSTANCE).ifPresent((k) -> ((INBTSerializable<CompoundTag>) k).deserializeNBT(object.tag));
             }
         });
         context.get().setPacketHandled(true);

@@ -22,6 +22,12 @@ public interface IWorshipper {
     void tick(Level level);
     Vec3 getBeforePosition();
     void setBeforePosition(Vec3 beforePosition);
+    Vec3 getSeatPosition();
+    void setSeatPosition(Vec3 seatPosition);
+    float getLoseFaithChance();
+    void setLoseFaithChance(float loseFaithChance);
+    void setLastSermon(long lastSermon);
+    long getLastSermon();
 
     class Provider implements ICapabilityProvider, INBTSerializable<CompoundTag> {
         final Worshipper impl = new Worshipper();

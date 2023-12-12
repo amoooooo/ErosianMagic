@@ -6,6 +6,7 @@ import aster.amo.erosianmagic.bard.song.SongPacket;
 import aster.amo.erosianmagic.particle.ParticleRegistry;
 import aster.amo.erosianmagic.particle.PsychicScreamParticle;
 import aster.amo.erosianmagic.registry.EntityRegistry;
+import aster.amo.erosianmagic.util.ClassUtils;
 import aster.amo.erosianmagic.witch.eidolon.BookRegistry;
 import aster.amo.erosianmagic.witch.eidolon.QuickChant;
 import com.cstav.genshinstrument.item.InstrumentItem;
@@ -61,6 +62,7 @@ import static aster.amo.erosianmagic.ErosianMagic.MODID;
 
 public class ErosianMagicClient {
     public static long lastCombatTime = 0;
+    public static String CLASS = "none";
 
     @Mod.EventBusSubscriber(modid = MODID, bus = Mod.EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
     static
@@ -178,10 +180,14 @@ public class ErosianMagicClient {
             Player entity = Minecraft.getInstance().player;
             if(event.isAttack()){
                 if(entity.getItemInHand(InteractionHand.MAIN_HAND).is(Registry.CODEX.get())) {
-                    if(!KnowledgeUtil.knowsSign(entity, Signs.MAGIC_SIGN)) return;
+                    if(!KnowledgeUtil.knowsSign(entity, Signs.WICKED_SIGN) || !KnowledgeUtil.knowsSign(entity, Signs.SACRED_SIGN)) return;
                     ItemCooldowns cooldowns = entity.getCooldowns();
                     if (!cooldowns.isOnCooldown(Registry.CODEX.get())) {
-                        QuickChant.add(Signs.MAGIC_SIGN);
+                        if(CLASS.equals("Cleric")){
+                            QuickChant.add(Signs.SACRED_SIGN);
+                        } else {
+                            QuickChant.add(Signs.WICKED_SIGN);
+                        }
                         Networking.sendToServer(new AttemptCastPacket(Minecraft.getInstance().player, QuickChant.getChant()));
                         AttributeInstance cdr = entity.getAttribute(AttributeRegistry.COOLDOWN_REDUCTION.get());
                         entity.getCooldowns().addCooldown(entity.getItemInHand(InteractionHand.MAIN_HAND).getItem(), (int) (5 * (1 - (cdr.getValue() - 1))));
@@ -189,7 +195,7 @@ public class ErosianMagicClient {
                     }
                     event.setSwingHand(false);
                     event.setCanceled(true);
-                } else if (entity.getItemInHand(InteractionHand.MAIN_HAND).getItem() instanceof InstrumentItem iItem) {
+                } else if (entity.getItemInHand(InteractionHand.MAIN_HAND).getItem() instanceof InstrumentItem iItem && CLASS.equals("Bard")) {
                     ItemCooldowns cooldowns = entity.getCooldowns();
                     if (!cooldowns.isOnCooldown(iItem)) {
                         aster.amo.erosianmagic.net.Networking.sendToServer(new SongPacket(new ResourceLocation("erosianmagic", "guiding_bolt"), false));
