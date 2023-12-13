@@ -3,6 +3,7 @@ package aster.amo.erosianmagic.cleric;
 import aster.amo.erosianmagic.cleric.chapel.Temple;
 import aster.amo.erosianmagic.net.ClericSyncPacket;
 import aster.amo.erosianmagic.net.Networking;
+import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.common.util.INBTSerializable;
@@ -15,6 +16,7 @@ public class Cleric implements ICleric, INBTSerializable<CompoundTag> {
     private long sermonCooldown = 0;
     private Temple temple;
     private boolean chosenClass = false;
+    private BlockPos recallPos;
     @Override
     public float getPrayerPower() {
         if(hasTemple()) {
@@ -74,6 +76,16 @@ public class Cleric implements ICleric, INBTSerializable<CompoundTag> {
     }
 
     @Override
+    public BlockPos getRecallPos() {
+        return recallPos;
+    }
+
+    @Override
+    public void setRecallPos(BlockPos pos) {
+        recallPos = pos;
+    }
+
+    @Override
     public void setChosenClass(boolean isClass) {
         chosenClass = isClass;
     }
@@ -92,6 +104,9 @@ public class Cleric implements ICleric, INBTSerializable<CompoundTag> {
         if(temple != null){
             nbt.put("temple", temple.toNbt());
         }
+        if (recallPos != null) {
+            nbt.put("recallPos", net.minecraft.nbt.NbtUtils.writeBlockPos(recallPos));
+        }
         return nbt;
     }
 
@@ -102,6 +117,9 @@ public class Cleric implements ICleric, INBTSerializable<CompoundTag> {
         chosenClass = nbt.getBoolean("chosenClass");
         if(nbt.contains("temple"))
             temple = Temple.fromNbt(nbt.getCompound("temple"));
+        if (nbt.contains("recallPos")) {
+            recallPos = net.minecraft.nbt.NbtUtils.readBlockPos(nbt.getCompound("recallPos"));
+        }
     }
 
     @Override

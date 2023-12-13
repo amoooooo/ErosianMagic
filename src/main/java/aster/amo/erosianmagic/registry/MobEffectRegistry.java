@@ -52,4 +52,11 @@ public class MobEffectRegistry {
 
     public static final RegistryObject<MobEffect> WARDING_BOND = MOB_EFFECT_DEFERRED_REGISTER.register("warding_bond", () -> new WardingBondEffect(MobEffectCategory.BENEFICIAL, 0x00ff00));
 
+    public static final RegistryObject<MobEffect> BLESSED = MOB_EFFECT_DEFERRED_REGISTER.register("blessed", () -> new BlessedEffect(MobEffectCategory.BENEFICIAL, 0x00ff00)
+            .addAttributeModifier(Attributes.LUCK, "87733c95-909c-4fc3-9780-e35a89565666", 0.05f, AttributeModifier.Operation.MULTIPLY_TOTAL));
+
+    public static final RegistryObject<MobEffect> SHIELD_OF_FAITH = MOB_EFFECT_DEFERRED_REGISTER.register("shield_of_faith", () -> new ShieldOfFaithEffect(MobEffectCategory.BENEFICIAL, 0x00ff00)
+            .addAttributeModifier(Attributes.ARMOR, "87733c95-909c-4fc3-9780-e35a89565666", 2.5f, AttributeModifier.Operation.ADDITION)
+            .addAttributeModifier(Attributes.ARMOR_TOUGHNESS, "87733c95-909c-4fc3-9780-e35a89565666", 0.25f, AttributeModifier.Operation.MULTIPLY_TOTAL));
+
 }

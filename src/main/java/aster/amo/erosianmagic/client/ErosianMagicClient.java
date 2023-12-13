@@ -11,8 +11,8 @@ import aster.amo.erosianmagic.witch.eidolon.BookRegistry;
 import aster.amo.erosianmagic.witch.eidolon.QuickChant;
 import com.cstav.genshinstrument.item.InstrumentItem;
 import com.cstav.genshinstrument.item.ModItems;
-import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.blaze3d.vertex.VertexConsumer;
+import com.mojang.blaze3d.systems.RenderSystem;
+import com.mojang.blaze3d.vertex.*;
 import elucent.eidolon.network.AttemptCastPacket;
 import elucent.eidolon.network.Networking;
 import elucent.eidolon.registries.EidolonSounds;
@@ -27,6 +27,8 @@ import net.leawind.mc.thirdpersonperspective.ThirdPersonPerspective;
 import net.minecraft.client.CameraType;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.model.EntityModel;
+import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.entity.NoopRenderer;
 import net.minecraft.client.renderer.texture.OverlayTexture;
@@ -36,6 +38,7 @@ import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.Mth;
 import net.minecraft.world.InteractionHand;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
@@ -46,6 +49,7 @@ import net.minecraftforge.client.event.*;
 import net.minecraftforge.client.gui.overlay.VanillaGuiOverlay;
 import net.minecraftforge.client.settings.KeyModifier;
 import net.minecraftforge.event.TickEvent;
+import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
@@ -90,6 +94,41 @@ public class ErosianMagicClient {
     @Mod.EventBusSubscriber(modid = MODID, bus = Mod.EventBusSubscriber.Bus.FORGE, value = Dist.CLIENT)
     static
     class ErosianMagicClientForge {
+
+        private static final ResourceLocation DICE = new ResourceLocation("erosianmagic:textures/vfx/20_sided.png");
+        // TODO:    why no work???????
+        @SubscribeEvent
+        public static void onNametagRender(RenderNameTagEvent event){
+            PoseStack ps = event.getPoseStack();
+            ps.pushPose();
+            ps.translate(0, event.getEntity().getBbHeight() + 0.5D, 0);
+            ps.mulPose(Minecraft.getInstance().getEntityRenderDispatcher().cameraOrientation());
+            ps.scale(-0.25F, -0.25F, 0.25F);
+            ps.translate(0, 0.5, 0);
+
+            Matrix4f matrix = ps.last().pose();
+            float size = 1F;
+            RenderSystem.disableBlend();
+            RenderSystem.enableDepthTest();
+            RenderSystem.defaultBlendFunc();
+            RenderSystem.setShader(GameRenderer::getPositionTexShader);
+            RenderSystem.setShaderTexture(0, DICE);
+
+            Tesselator tessellator = Tesselator.getInstance();
+            BufferBuilder buffer = tessellator.getBuilder();
+            buffer.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_TEX_COLOR);
+            buffer.vertex(matrix, -size, -size, 0).uv(0, 0).color(255, 255, 255, 255).endVertex();
+            buffer.vertex(matrix, -size, size, 0).uv(0, 1).color(255, 255, 255, 255).endVertex();
+            buffer.vertex(matrix, size, size, 0).uv(1, 1).color(255, 255, 255, 255).endVertex();
+            buffer.vertex(matrix, size, -size, 0).uv(1, 0).color(255, 255, 255, 255).endVertex();
+            tessellator.end();
+
+            ps.translate(0.0, 0.0, 0.025f);
+            // TODO: SHOW DICE ROLL!! ADD PARCHMENT!!
+            RenderSystem.disableBlend();
+
+            ps.popPose();
+        }
         @SubscribeEvent
         public static void onHudRender(RenderGuiOverlayEvent.Post event) {
             if (event.getOverlay().id() != VanillaGuiOverlay.HOTBAR.id()) return;

@@ -35,4 +35,10 @@ public class SpellRegistry {
     public static final RegistryObject<AbstractSpell> PRAYER_OF_HEALING = registerSpell(new PrayerOfHealingSpell());
     public static final RegistryObject<AbstractSpell> TOLL_THE_DEAD = registerSpell(new TollTheDeadSpell());
     public static final RegistryObject<AbstractSpell> WARDING_BOND = registerSpell(new WardingBondSpell());
+    public static final RegistryObject<AbstractSpell> BLESS = registerSpell(new BlessSpell());
+    public static final RegistryObject<AbstractSpell> SHIELD_OF_FAITH = registerSpell(new ShieldOfFaithSpell());
+    public static final RegistryObject<AbstractSpell> MASS_HEALING_WORD = registerSpell(new MassHealingWordSpell());
+    public static final RegistryObject<AbstractSpell> INFLICT_WOUNDS = registerSpell(new InflictWoundsSpell());
+    public static final RegistryObject<AbstractSpell> CURE_WOUNDS = registerSpell(new CureWoundsSpell());
+    public static final RegistryObject<AbstractSpell> WORD_OF_RECALL = registerSpell(new WordOfRecallSpell());
 }

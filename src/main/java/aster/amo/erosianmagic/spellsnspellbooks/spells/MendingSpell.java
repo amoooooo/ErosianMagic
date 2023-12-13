@@ -78,15 +78,15 @@ public class MendingSpell extends AbstractSpell {
                 if (Utils.shouldHealEntity(entity, target) && entity.distanceTo(target) <= radius) {
                     target.getArmorSlots().forEach((itemStack) -> {
                         if (itemStack.isDamaged()) {
-                            itemStack.setDamageValue((int) -Math.max(0, (int)itemStack.getDamageValue() - 1));
+                            itemStack.setDamageValue(itemStack.getDamageValue() - 1);
                         }
                     });
-                    target.getMainHandItem().setDamageValue((int) -Math.max(0, (int) target.getMainHandItem().getDamageValue() - 1));
-                    target.getOffhandItem().setDamageValue((int) -Math.max(0, (int) target.getOffhandItem().getDamageValue() - 1));
+                    target.getMainHandItem().setDamageValue(target.getMainHandItem().getDamageValue() - 1);
+                    target.getOffhandItem().setDamageValue(target.getOffhandItem().getDamageValue() - 1);
                     if(target instanceof ServerPlayer serverPlayer) {
                         serverPlayer.getInventory().items.forEach((itemStack) -> {
                             if (itemStack.isDamaged()) {
-                                itemStack.setDamageValue((int) -Math.max(0, itemStack.getDamageValue() - 1));
+                                itemStack.setDamageValue(itemStack.getDamageValue() - 1);
                             }
                         });
                     }

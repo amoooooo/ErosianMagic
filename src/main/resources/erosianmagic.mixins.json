@@ -6,6 +6,8 @@
   "refmap": "erosianmagic.refmap.json",
   "mixins": [
     "EntityMixin",
+    "TargetedAreaEntityMixin",
+    "client.ClientInputEventsMixin",
     "client.LivingEntityRendererMixin"
   ],
   "client": [

@@ -26,13 +26,16 @@ import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.commands.SharedSuggestionProvider;
 import net.minecraft.commands.arguments.EntityArgument;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.npc.Villager;
 import net.minecraft.world.entity.player.Player;
+import net.minecraftforge.common.util.INBTSerializable;
 import net.minecraftforge.event.AttachCapabilitiesEvent;
 import net.minecraftforge.event.RegisterCommandsEvent;
 import net.minecraftforge.event.TickEvent;
@@ -99,6 +102,24 @@ public class ErosianMagic {
             if(event.getObject() instanceof Villager) {
                 event.addCapability(new ResourceLocation(MODID, "worshipper"), new IWorshipper.Provider());
             }
+        }
+
+        @SubscribeEvent
+        public static void playerClone(PlayerEvent.Clone event) {
+            event.getOriginal().getCapability(ICleric.INSTANCE).ifPresent(original -> {
+                event.getEntity().getCapability(ICleric.INSTANCE).ifPresent(cleric -> {
+                    ((INBTSerializable<CompoundTag>) cleric).deserializeNBT(((INBTSerializable<CompoundTag>) original).serializeNBT());
+                    cleric.sync(event.getEntity());
+                });
+            });
+            event.getOriginal().getCapability(ICleric.INSTANCE).invalidate();
+            event.getOriginal().getCapability(IBard.INSTANCE).ifPresent(original -> {
+                event.getEntity().getCapability(IBard.INSTANCE).ifPresent(bard -> {
+                    ((INBTSerializable<CompoundTag>) bard).deserializeNBT(((INBTSerializable<CompoundTag>) original).serializeNBT());
+                    bard.sync(event.getEntity());
+                });
+            });
+            event.getOriginal().getCapability(IBard.INSTANCE).invalidate();
         }
 
         @SubscribeEvent
@@ -171,7 +192,7 @@ public class ErosianMagic {
             } else if (event.getEntity() instanceof Player pl) {
                 damageRoll(event, event.getAmount() * 2, pl.getDisplayName(), event.getAmount() / 2, pl);
             } else {
-                int roll = event.getEntity().level().random.nextInt(20) + 1;
+                float roll = rollWithLuck(event.getEntity(), event.getEntity().getAttributeValue(Attributes.LUCK));
                 if (roll == 1) {
                     event.setAmount(event.getAmount() * 2);
                 } else if (roll == 20) {
@@ -183,7 +204,7 @@ public class ErosianMagic {
         }
 
         private static void damageRoll(LivingHurtEvent event, float v, Component displayName, float v2, LivingEntity pl) {
-            int roll = event.getEntity().level().random.nextInt(20) + 1;
+            float roll = rollWithLuck(pl, pl.getAttributeValue(Attributes.LUCK));
             if (roll == 1) {
                 event.setAmount(v);
                 List<Player> players = event.getEntity().level().getEntitiesOfClass(Player.class, event.getEntity().getBoundingBox().inflate(32));
@@ -213,7 +234,7 @@ public class ErosianMagic {
                     UUID leader = worshipper.getLeader();
                     if(leader != null) {
                         long timeSinceLastSermon = event.getEntity().level().getGameTime() - worshipper.getLastSermon();
-                        worshipper.setLoseFaithChance((float) (timeSinceLastSermon / 6000));
+                        worshipper.setLoseFaithChance((float) (timeSinceLastSermon / 600000));
                         if(event.getEntity().getRandom().nextFloat() < worshipper.getLoseFaithChance()) {
                             Player player = event.getEntity().level().getPlayerByUUID(leader);
                             if(player != null) {
@@ -238,7 +259,7 @@ public class ErosianMagic {
             // otherwise, heal is multiplied by the int/20
             if(event.getAmount() < 2) return;
             if (event.getEntity() instanceof Player player) {
-                int roll = event.getEntity().level().random.nextInt(20) + 1;
+                float roll = rollWithLuck(player, player.getAttributeValue(Attributes.LUCK));
                 if(event.getEntity().hasEffect(MobEffectRegistry.HOPEFUL.get())){
                     roll = 19;
                     player.sendSystemMessage(Component.literal("The Beacon of Hope shines upon you!").withStyle(ChatFormatting.GREEN));
@@ -259,7 +280,7 @@ public class ErosianMagic {
                     event.setAmount(event.getAmount() * ((float) roll / 20));
                 }
             } else {
-                int roll = event.getEntity().level().random.nextInt(20) + 1;
+                float roll = rollWithLuck(event.getEntity(), event.getEntity().getAttributeValue(Attributes.LUCK));
                 if (roll == 1) {
                     event.setAmount(event.getAmount() / 2);
                 } else if (roll == 20) {
@@ -268,6 +289,20 @@ public class ErosianMagic {
                     event.setAmount(event.getAmount() * ((float) roll / 20));
                 }
             }
+        }
+
+        public static float rollWithLuck(LivingEntity entity, double luck){
+            float baseChance = 1.0f / 20.0f;
+            double adjustedLuck = luck / 1024.0D;
+            float randomNumber = entity.getRandom().nextFloat();
+            float cumulativeProbability = 0.0f;
+            for (int i = 1; i <= 20; i++) {
+                cumulativeProbability += baseChance + (adjustedLuck * i / 20.0f);
+                if (randomNumber <= cumulativeProbability) {
+                    return i;
+                }
+            }
+            return 10;
         }
 
         @SubscribeEvent

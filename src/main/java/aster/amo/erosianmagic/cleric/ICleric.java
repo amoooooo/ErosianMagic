@@ -2,6 +2,7 @@ package aster.amo.erosianmagic.cleric;
 
 import aster.amo.erosianmagic.cleric.chapel.Temple;
 import aster.amo.erosianmagic.util.IClass;
+import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraftforge.common.capabilities.Capability;
@@ -50,6 +51,8 @@ public interface ICleric extends IClass {
     Temple getTemple();
     void setTemple(Temple temple);
     boolean hasTemple();
+    BlockPos getRecallPos();
+    void setRecallPos(BlockPos pos);
 
     @Override
     default String getClassName() {
