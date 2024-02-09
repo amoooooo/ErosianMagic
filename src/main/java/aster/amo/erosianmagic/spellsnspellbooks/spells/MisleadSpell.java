@@ -55,7 +55,7 @@ public class MisleadSpell extends AbstractSpell {
     }
 
     @Override
-    public void onCast(Level level, int spellLevel, LivingEntity entity, MagicData playerMagicData) {
+    public void onCast(Level level, int spellLevel, LivingEntity entity, CastSource source, MagicData playerMagicData) {
         int duration = getDuration(spellLevel, entity);
         float radius = getRadius(spellLevel, entity);
 
@@ -74,7 +74,7 @@ public class MisleadSpell extends AbstractSpell {
             });
         }
 
-        super.onCast(level, spellLevel, entity, playerMagicData);
+        super.onCast(level, spellLevel, entity, source, playerMagicData);
     }
 
     private float getRadius(int spellLevel, LivingEntity caster) {

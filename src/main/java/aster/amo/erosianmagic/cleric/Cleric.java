@@ -3,6 +3,9 @@ package aster.amo.erosianmagic.cleric;
 import aster.amo.erosianmagic.cleric.chapel.Temple;
 import aster.amo.erosianmagic.net.ClericSyncPacket;
 import aster.amo.erosianmagic.net.Networking;
+import aster.amo.erosianmagic.spellsnspellbooks.ClassSpells;
+import io.redspace.ironsspellbooks.api.magic.MagicData;
+import io.redspace.ironsspellbooks.api.spells.AbstractSpell;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.entity.player.Player;
@@ -10,6 +13,7 @@ import net.minecraftforge.common.util.INBTSerializable;
 
 import java.util.List;
 import java.util.UUID;
+import java.util.function.Supplier;
 
 public class Cleric implements ICleric, INBTSerializable<CompoundTag> {
     private float prayerPower = 0;
@@ -86,8 +90,13 @@ public class Cleric implements ICleric, INBTSerializable<CompoundTag> {
     }
 
     @Override
-    public void setChosenClass(boolean isClass) {
+    public void setChosenClass(boolean isClass, Player player) {
         chosenClass = isClass;
+        if(isClass) {
+            List<Supplier<AbstractSpell>> spells = ClassSpells.CLASS_SPELLS.get("Cleric");
+            MagicData.getPlayerMagicData(player).getSyncedData().forgetAllSpells();
+            spells.forEach(spell -> MagicData.getPlayerMagicData(player).getSyncedData().learnSpell(spell.get()));
+        }
     }
 
     @Override

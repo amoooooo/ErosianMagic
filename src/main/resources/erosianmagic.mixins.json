@@ -5,12 +5,14 @@
   "compatibilityLevel": "JAVA_8",
   "refmap": "erosianmagic.refmap.json",
   "mixins": [
+    "AbstractSpellMixin",
     "EntityMixin",
     "TargetedAreaEntityMixin",
     "client.ClientInputEventsMixin",
     "client.LivingEntityRendererMixin"
   ],
   "client": [
+    "client.GuiMixin"
   ],
   "injectors": {
     "defaultRequire": 1

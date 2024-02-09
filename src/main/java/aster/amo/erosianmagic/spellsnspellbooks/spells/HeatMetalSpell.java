@@ -87,8 +87,8 @@ public class HeatMetalSpell extends AbstractSpell {
     }
 
     @Override
-    public void onCast(Level level, int spellLevel, LivingEntity entity, MagicData playerMagicData) {
-        super.onCast(level, spellLevel, entity, playerMagicData);
+    public void onCast(Level level, int spellLevel, LivingEntity entity, CastSource source, MagicData playerMagicData) {
+        super.onCast(level, spellLevel, entity, source, playerMagicData);
     }
 
     @Override

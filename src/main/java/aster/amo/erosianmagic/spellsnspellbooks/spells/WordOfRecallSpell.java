@@ -106,7 +106,7 @@ public class WordOfRecallSpell extends AbstractSpell {
     }
 
     @Override
-    public void onCast(Level level, int spellLevel, LivingEntity entity, MagicData playerMagicData) {
+    public void onCast(Level level, int spellLevel, LivingEntity entity, CastSource source, MagicData playerMagicData) {
         if(entity instanceof Player player) {
             player.getCapability(ICleric.INSTANCE).ifPresent(cleric -> {
                 if(!cleric.isChosenClass()) return;
@@ -127,7 +127,7 @@ public class WordOfRecallSpell extends AbstractSpell {
                 }
             });
         }
-        super.onCast(level, spellLevel, entity, playerMagicData);
+        super.onCast(level, spellLevel, entity, source, playerMagicData);
     }
 
     @Override

@@ -66,4 +66,9 @@ public class FaerieFireAoe extends AoeEntity implements AntiMagicSusceptible {
     public ParticleOptions getParticle() {
         return ParticleRegistry.WISP_PARTICLE.get();
     }
+
+    @Override
+    protected void defineSynchedData() {
+
+    }
 }

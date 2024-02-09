@@ -54,7 +54,7 @@ public class InflictWoundsSpell extends AbstractSpell {
         return getSpellPower(spellLevel, entity) * .5f;
     }
     @Override
-    public void onCast(Level level, int spellLevel, LivingEntity entity, MagicData playerMagicData) {
+    public void onCast(Level level, int spellLevel, LivingEntity entity, CastSource source, MagicData playerMagicData) {
         if (playerMagicData.getAdditionalCastData() instanceof CastTargetingData castTargetingData) {
             LivingEntity target = castTargetingData.getTarget((ServerLevel) level);
             if (target != null) {
@@ -65,7 +65,7 @@ public class InflictWoundsSpell extends AbstractSpell {
                 }
             }
         }
-        super.onCast(level, spellLevel, entity, playerMagicData);
+        super.onCast(level, spellLevel, entity, source, playerMagicData);
     }
 
     @Override

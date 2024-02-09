@@ -27,11 +27,11 @@ public class HexbloodSpell extends AbstractSpell {
         this.baseManaCost = 50;
     }
     @Override
-    public void onCast(Level level, int spellLevel, LivingEntity entity, MagicData playerMagicData) {
+    public void onCast(Level level, int spellLevel, LivingEntity entity, CastSource source, MagicData playerMagicData) {
 
         entity.addEffect(new MobEffectInstance(MobEffectRegistry.HEXBLOOD.get(), (int) (getSpellPower(spellLevel, entity) * 20), this.getLevel(spellLevel, entity) - 1, false, false, true));
 
-        super.onCast(level, spellLevel, entity, playerMagicData);
+        super.onCast(level, spellLevel, entity, source, playerMagicData);
     }
 
     @Override

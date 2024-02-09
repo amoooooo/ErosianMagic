@@ -57,7 +57,7 @@ public class BlessSpell extends AbstractSpell {
     }
 
     @Override
-    public void onCast(Level level, int spellLevel, LivingEntity entity, MagicData playerMagicData) {
+    public void onCast(Level level, int spellLevel, LivingEntity entity, CastSource source, MagicData playerMagicData) {
         if (playerMagicData.getAdditionalCastData() instanceof CastMultiTargetingData multiData) {
             multiData.getTargets().forEach(target -> {
                 LivingEntity entity1 = ((LivingEntity)((ServerLevel)level).getEntity(target));
@@ -73,7 +73,7 @@ public class BlessSpell extends AbstractSpell {
 
 
 
-        super.onCast(level, spellLevel, entity, playerMagicData);
+        super.onCast(level, spellLevel, entity, source, playerMagicData);
     }
 
     private float getRadius(int spellLevel, LivingEntity caster) {

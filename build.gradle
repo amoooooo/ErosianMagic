@@ -13,6 +13,7 @@ plugins {
     id 'eclipse'
     id 'idea'
     id 'net.minecraftforge.gradle' version '[6.0,6.2)'
+    id 'org.parchmentmc.librarian.forgegradle' version '1.+'
 }
 
 apply plugin: 'org.spongepowered.mixin'
@@ -42,7 +43,7 @@ minecraft {
     //
     // Use non-default mappings at your own risk. They may not always work.
     // Simply re-run your setup task after changing the mappings to update your workspace.
-    mappings channel: mapping_channel, version: mapping_version
+    mappings channel: 'parchment', version: '2023.09.03-1.20.1'
 
     // When true, this property will have all Eclipse/IntelliJ IDEA run configurations run the "prepareX" task for the given run configuration before launching the game.
     // enableEclipsePrepareRuns = true
@@ -162,6 +163,18 @@ repositories {
     maven {
         url = "https://api.modrinth.com/maven"
     }
+    mavenLocal()
+    mavenCentral()
+    maven {
+        name = 'Sponge / Mixin'
+        url = 'https://repo.spongepowered.org/repository/maven-public/'
+    }
+    maven {
+        url "https://jitpack.io"
+        content {
+            includeGroupByRegex "com\\.github.*"
+        }
+    }
 }
 
 dependencies {
@@ -185,7 +198,6 @@ dependencies {
 //    implementation fg.deobf("curse.maven:eidolon-repraised-870250:4928824")
     implementation fg.deobf("curse.maven:curios-309927:4913335")
     // IRONS SPELLS N SPELLBOOKS **********************************************************************************
-    implementation fg.deobf("io.redspace.ironsspellbooks:irons_spellbooks:${irons_spells_version}")
 
     // GECKOLIB ***************************************************************************************************
     implementation fg.deobf("software.bernie.geckolib:geckolib-forge-${geckolib_version}")
@@ -220,6 +232,7 @@ dependencies {
     implementation fg.deobf("com.teamresourceful:resourcefullib-forge:1.20.1-2.1.16")
     implementation fg.deobf("com.teamresourceful:resourcefulconfig-forge:1.20.1-2.1.0")
     implementation fg.deobf("com.teamresourceful:argonauts-forge:1.20.1-1.0.6")
+    implementation fg.deobf("foundry.veil:Veil-forge-1.20.1-quasar:1.0.0.20")
     //runtimeOnly fg.deobf("curse.maven:placebo-283644:4546960")
     //runtimeOnly fg.deobf("curse.maven:apotheosis-313970:4547399")
 

@@ -2,6 +2,7 @@ package aster.amo.erosianmagic.registry;
 
 import aster.amo.erosianmagic.ErosianMagic;
 import aster.amo.erosianmagic.spellsnspellbooks.spells.entity.FaerieFireAoe;
+import aster.amo.erosianmagic.spellsnspellbooks.spells.entity.PsychicLanceProjectile;
 import aster.amo.erosianmagic.util.AoeEffectEntity;
 import io.redspace.ironsspellbooks.IronsSpellbooks;
 import io.redspace.ironsspellbooks.entity.spells.magic_missile.MagicMissileProjectile;
@@ -28,4 +29,9 @@ public class EntityRegistry {
             .sized(4f, .8f)
             .clientTrackingRange(64)
             .build(new ResourceLocation(ErosianMagic.MODID, "faerie_fire_aoe").toString()));
+
+    public static final RegistryObject<EntityType<PsychicLanceProjectile>> PSYCHIC_LANCE = ENTITIES.register("psychic_lance", () -> EntityType.Builder.<PsychicLanceProjectile>of(PsychicLanceProjectile::new, MobCategory.MISC)
+            .sized(4f, .8f)
+            .clientTrackingRange(64)
+            .build(new ResourceLocation(ErosianMagic.MODID, "psychic_lance").toString()));
 }

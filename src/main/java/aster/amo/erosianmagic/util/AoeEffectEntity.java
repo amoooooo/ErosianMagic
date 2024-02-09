@@ -53,4 +53,8 @@ public class AoeEffectEntity extends AoeEntity {
     public ParticleOptions getParticle() {
         return particle;
     }
+
+    @Override
+    protected void defineSynchedData() {
+    }
 }

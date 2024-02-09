@@ -41,4 +41,7 @@ public class SpellRegistry {
     public static final RegistryObject<AbstractSpell> INFLICT_WOUNDS = registerSpell(new InflictWoundsSpell());
     public static final RegistryObject<AbstractSpell> CURE_WOUNDS = registerSpell(new CureWoundsSpell());
     public static final RegistryObject<AbstractSpell> WORD_OF_RECALL = registerSpell(new WordOfRecallSpell());
+    public static final RegistryObject<AbstractSpell> ELDRITCH_BLAST = registerSpell(new EldritchBlastSpell());
+    public static final RegistryObject<AbstractSpell> VICIOUS_MOCKERY = registerSpell(new ViciousMockerySpell());
+    public static final RegistryObject<AbstractSpell> MAGIC_WEAPON = registerSpell(new MagicWeaponSpell());
 }

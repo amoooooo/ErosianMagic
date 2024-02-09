@@ -54,7 +54,7 @@ public class TollTheDeadSpell extends AbstractSpell {
         return getSpellPower(spellLevel, entity) * .5f;
     }
     @Override
-    public void onCast(Level level, int spellLevel, LivingEntity entity, MagicData playerMagicData) {
+    public void onCast(Level level, int spellLevel, LivingEntity entity, CastSource source, MagicData playerMagicData) {
         entity.playSound(SoundEvents.BELL_BLOCK, 3.0f, 0.2f);
         // get entities around caster
         List<LivingEntity> entities = level.getEntitiesOfClass(LivingEntity.class, new AABB(entity.getX() - 16, entity.getY() - 16, entity.getZ() - 16, entity.getX() + 16, entity.getY() + 16, entity.getZ() + 16));
@@ -67,7 +67,7 @@ public class TollTheDeadSpell extends AbstractSpell {
                 DamageSources.applyDamage(e, damage, getDamageSource(entity));
             }
         });
-        super.onCast(level, spellLevel, entity, playerMagicData);
+        super.onCast(level, spellLevel, entity, source, playerMagicData);
     }
 
     @Override

@@ -4,8 +4,11 @@ import aster.amo.erosianmagic.client.ErosianMagicClient;
 import aster.amo.erosianmagic.net.BardSyncPacket;
 import aster.amo.erosianmagic.net.Networking;
 import aster.amo.erosianmagic.registry.MobEffectRegistry;
+import aster.amo.erosianmagic.spellsnspellbooks.ClassSpells;
 import earth.terrarium.argonauts.api.party.Party;
 import earth.terrarium.argonauts.client.handlers.party.PartyClientApiImpl;
+import io.redspace.ironsspellbooks.api.magic.MagicData;
+import io.redspace.ironsspellbooks.api.spells.AbstractSpell;
 import io.redspace.ironsspellbooks.api.util.Utils;
 import io.redspace.ironsspellbooks.entity.spells.target_area.TargetedAreaEntity;
 import io.redspace.ironsspellbooks.spells.TargetAreaCastData;
@@ -19,6 +22,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.common.util.INBTSerializable;
 
 import java.util.List;
+import java.util.function.Supplier;
 
 public class Bard implements IBard, INBTSerializable<CompoundTag> {
     int inspirationTime;
@@ -43,7 +47,8 @@ public class Bard implements IBard, INBTSerializable<CompoundTag> {
 
     @Override
     public void sync(Player player) {
-        if(!player.level().isClientSide()) Networking.sendToTracking(player.level(), player.blockPosition(), new BardSyncPacket(serializeNBT(), player.getUUID()));
+        if(!player.level().isClientSide())
+            Networking.sendToTracking(player.level(), player.blockPosition(), new BardSyncPacket(serializeNBT(), player.getUUID()));
     }
 
     @Override
@@ -100,6 +105,7 @@ public class Bard implements IBard, INBTSerializable<CompoundTag> {
         tag.putInt("inspirationTime", inspirationTime);
         tag.putBoolean("inspiring", inspiring);
         tag.putInt("entityId", entityId);
+        tag.putBoolean("isBard", isBard);
         return tag;
     }
 
@@ -109,11 +115,17 @@ public class Bard implements IBard, INBTSerializable<CompoundTag> {
         inspirationTime = nbt.getInt("inspirationTime");
         inspiring = nbt.getBoolean("inspiring");
         entityId = nbt.getInt("entityId");
+        isBard = nbt.getBoolean("isBard");
     }
 
     @Override
-    public void setChosenClass(boolean isClass) {
+    public void setChosenClass(boolean isClass, Player player) {
         isBard = isClass;
+        if(isClass) {
+            List<Supplier<AbstractSpell>> spells = ClassSpells.CLASS_SPELLS.get("Bard");
+            MagicData.getPlayerMagicData(player).getSyncedData().forgetAllSpells();
+            spells.forEach(spell -> MagicData.getPlayerMagicData(player).getSyncedData().learnSpell(spell.get()));
+        }
     }
 
     @Override

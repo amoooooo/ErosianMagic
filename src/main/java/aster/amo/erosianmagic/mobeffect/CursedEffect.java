@@ -14,6 +14,7 @@ import net.minecraft.core.Holder;
 import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.damagesource.DamageType;
 import net.minecraft.world.effect.MobEffect;
@@ -44,10 +45,10 @@ public class CursedEffect extends ExtendedMobEffect {
                 int modifier = (int) Math.floor(Math.random()) == 0 ? -1 : 1;
                 Vec3 pos = entity.position().add(entity.getBoundingBox().getXsize() * modifier, entity.getBoundingBox().getYsize() * modifier, entity.getBoundingBox().getZsize() * modifier);
                 Particles.create(EidolonParticles.WISP_PARTICLE)
-                        .setAlpha(0.25f, 0.0f).setScale(0.03f)
+                        .setAlpha(0.5f, 0.0f).setScale(0.3f)
                         .setLifetime(20).setColor(0.5f, 0.0f, 1.0f)
                         .enableGravity().randomVelocity(0.1f)
-                        .spawn(entity.level(), pos.x, pos.y, pos.z);
+                        .spawn(((ServerLevel)entity.level()), pos.x, pos.y, pos.z);
             }
         }
         super.afterIncomingAttack(entity, effectInstance, source, amount);
@@ -63,9 +64,9 @@ public class CursedEffect extends ExtendedMobEffect {
             float angle = (float) (Math.random() * 2 * Math.PI);
             Vec3 pos = entity.position().add(Math.cos(angle), 0, Math.sin(angle));
             Particles.create(EidolonParticles.WISP_PARTICLE)
-                    .setAlpha(0.25f, 0.0f).setScale(0.03f)
+                    .setAlpha(0.5f, 0.0f).setScale(0.3f)
                     .setLifetime(3).setColor(0.5f, 0.0f, 1.0f)
-                    .spawn(entity.level(), pos.x, pos.y, pos.z);
+                    .spawn((ServerLevel)entity.level(), pos.x, pos.y, pos.z);
         }
         super.tick(entity, effectInstance, amplifier);
     }

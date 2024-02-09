@@ -54,10 +54,9 @@ public class PrayerOfHealingSpell extends AbstractSpell {
     }
 
     @Override
-    protected void playSound(Optional<SoundEvent> sound, Entity entity) {
+    public void playSound(Optional<SoundEvent> sound, Entity entity) {
         super.playSound(sound, entity);
     }
-    @Override
     protected void playSound(Optional<SoundEvent> sound, Entity entity, boolean playDefaultSound) {
         sound.ifPresent(soundEvent -> entity.playSound(soundEvent, 2.0f, .1f + Utils.random.nextFloat() * .2f));
     }
@@ -85,8 +84,8 @@ public class PrayerOfHealingSpell extends AbstractSpell {
     }
 
     @Override
-    public void onCast(Level level, int spellLevel, LivingEntity entity, MagicData playerMagicData) {
-        super.onCast(level, spellLevel, entity, playerMagicData);
+    public void onCast(Level level, int spellLevel, LivingEntity entity, CastSource source, MagicData playerMagicData) {
+        super.onCast(level, spellLevel, entity, source, playerMagicData);
     }
 
     @Override

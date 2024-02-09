@@ -54,7 +54,7 @@ public class FaerieFireSpell extends AbstractSpell {
     }
 
     @Override
-    public void onCast(Level level, int spellLevel, LivingEntity entity, MagicData playerMagicData) {
+    public void onCast(Level level, int spellLevel, LivingEntity entity, CastSource source, MagicData playerMagicData) {
         Vec3 spawn = null;
         if (playerMagicData.getAdditionalCastData() instanceof CastTargetingData castTargetingData) {
             var target = castTargetingData.getTarget((ServerLevel) level);
@@ -82,7 +82,7 @@ public class FaerieFireSpell extends AbstractSpell {
         visualEntity.setDuration(duration);
         visualEntity.setOwner(aoeEntity);
 
-        super.onCast(level, spellLevel, entity, playerMagicData);
+        super.onCast(level, spellLevel, entity, source, playerMagicData);
     }
 
     private float getRadius(int spellLevel, LivingEntity caster) {

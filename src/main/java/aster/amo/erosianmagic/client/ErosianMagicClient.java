@@ -6,6 +6,7 @@ import aster.amo.erosianmagic.bard.song.SongPacket;
 import aster.amo.erosianmagic.particle.ParticleRegistry;
 import aster.amo.erosianmagic.particle.PsychicScreamParticle;
 import aster.amo.erosianmagic.registry.EntityRegistry;
+import aster.amo.erosianmagic.rolls.IRoller;
 import aster.amo.erosianmagic.util.ClassUtils;
 import aster.amo.erosianmagic.witch.eidolon.BookRegistry;
 import aster.amo.erosianmagic.witch.eidolon.QuickChant;
@@ -13,6 +14,7 @@ import com.cstav.genshinstrument.item.InstrumentItem;
 import com.cstav.genshinstrument.item.ModItems;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.*;
+import com.mojang.math.Axis;
 import elucent.eidolon.network.AttemptCastPacket;
 import elucent.eidolon.network.Networking;
 import elucent.eidolon.registries.EidolonSounds;
@@ -21,34 +23,39 @@ import elucent.eidolon.registries.Signs;
 import elucent.eidolon.util.KnowledgeUtil;
 import io.redspace.ironsspellbooks.api.registry.AttributeRegistry;
 import io.redspace.ironsspellbooks.api.util.Utils;
+import io.redspace.ironsspellbooks.entity.spells.magic_arrow.MagicArrowRenderer;
 import io.redspace.ironsspellbooks.player.ClientMagicData;
 import io.redspace.ironsspellbooks.render.SpellRenderingHelper;
 import net.leawind.mc.thirdpersonperspective.ThirdPersonPerspective;
 import net.minecraft.client.CameraType;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.Font;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.model.EntityModel;
 import net.minecraft.client.renderer.GameRenderer;
+import net.minecraft.client.renderer.LightTexture;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.entity.NoopRenderer;
 import net.minecraft.client.renderer.texture.OverlayTexture;
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.Mth;
 import net.minecraft.world.InteractionHand;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.Item;
-import net.minecraft.world.item.ItemCooldowns;
-import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.*;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.*;
 import net.minecraftforge.client.gui.overlay.VanillaGuiOverlay;
 import net.minecraftforge.client.settings.KeyModifier;
 import net.minecraftforge.event.TickEvent;
+import net.minecraftforge.event.entity.player.ItemTooltipEvent;
 import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -88,6 +95,7 @@ public class ErosianMagicClient {
         public static void registerEntityRenderers(EntityRenderersEvent.RegisterRenderers event) {
             event.registerEntityRenderer(EntityRegistry.AOE_EFFECT.get(), NoopRenderer::new);
             event.registerEntityRenderer(EntityRegistry.FAERIE_FIRE_AOE.get(), NoopRenderer::new);
+            event.registerEntityRenderer(EntityRegistry.PSYCHIC_LANCE.get(), MagicArrowRenderer::new);
         }
     }
 
@@ -96,38 +104,56 @@ public class ErosianMagicClient {
     class ErosianMagicClientForge {
 
         private static final ResourceLocation DICE = new ResourceLocation("erosianmagic:textures/vfx/20_sided.png");
-        // TODO:    why no work???????
         @SubscribeEvent
         public static void onNametagRender(RenderNameTagEvent event){
-            PoseStack ps = event.getPoseStack();
-            ps.pushPose();
-            ps.translate(0, event.getEntity().getBbHeight() + 0.5D, 0);
-            ps.mulPose(Minecraft.getInstance().getEntityRenderDispatcher().cameraOrientation());
-            ps.scale(-0.25F, -0.25F, 0.25F);
-            ps.translate(0, 0.5, 0);
+            Entity entity = event.getEntity();
+            if(entity instanceof LivingEntity livingEntity) {
+                livingEntity.getCapability(IRoller.INSTANCE).ifPresent(roller -> {
+                    if(roller.shouldDisplayRoll()) {
+                        PoseStack ps = event.getPoseStack();
+                        ps.pushPose();
+                        ps.translate(0, event.getEntity().getBbHeight() + 0.5D, 0);
+                        ps.mulPose(Minecraft.getInstance().getEntityRenderDispatcher().cameraOrientation());
+                        ps.scale(-0.25F, -0.25F, 0.25F);
+                        ps.translate(0, 0.5, 0);
+                        ps.scale(0.75f, 0.75f, 0.75f);
+                        float scalar = roller.getRollTicks()/10F;
+                        ps.scale(scalar, scalar, scalar);
+                        float rot = (float) Math.min(360.0f, Mth.lerp(roller.getRollTicks()/10f, 0, 360) + event.getPartialTick());
+                        ps.mulPose(Axis.ZP.rotationDegrees(rot));
+                        Matrix4f matrix = ps.last().pose();
+                        float size = 1F;
+                        RenderSystem.disableBlend();
+                        RenderSystem.enableDepthTest();
+                        RenderSystem.defaultBlendFunc();
+                        RenderSystem.setShader(GameRenderer::getPositionTexShader);
+                        RenderSystem.setShaderTexture(0, DICE);
 
-            Matrix4f matrix = ps.last().pose();
-            float size = 1F;
-            RenderSystem.disableBlend();
-            RenderSystem.enableDepthTest();
-            RenderSystem.defaultBlendFunc();
-            RenderSystem.setShader(GameRenderer::getPositionTexShader);
-            RenderSystem.setShaderTexture(0, DICE);
+                        Tesselator tessellator = Tesselator.getInstance();
+                        BufferBuilder buffer = tessellator.getBuilder();
+                        buffer.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_TEX_COLOR);
+                        buffer.vertex(matrix, -size, -size, 0).uv(0, 0).color(255, 255, 255, 255).endVertex();
+                        buffer.vertex(matrix, -size, size, 0).uv(0, 1).color(255, 255, 255, 255).endVertex();
+                        buffer.vertex(matrix, size, size, 0).uv(1, 1).color(255, 255, 255, 255).endVertex();
+                        buffer.vertex(matrix, size, -size, 0).uv(1, 0).color(255, 255, 255, 255).endVertex();
+                        tessellator.end();
 
-            Tesselator tessellator = Tesselator.getInstance();
-            BufferBuilder buffer = tessellator.getBuilder();
-            buffer.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_TEX_COLOR);
-            buffer.vertex(matrix, -size, -size, 0).uv(0, 0).color(255, 255, 255, 255).endVertex();
-            buffer.vertex(matrix, -size, size, 0).uv(0, 1).color(255, 255, 255, 255).endVertex();
-            buffer.vertex(matrix, size, size, 0).uv(1, 1).color(255, 255, 255, 255).endVertex();
-            buffer.vertex(matrix, size, -size, 0).uv(1, 0).color(255, 255, 255, 255).endVertex();
-            tessellator.end();
+                        ps.translate(0.0, 0.0, -0.025f);
+                        ps.scale(0.1F, 0.1F, 0.1F);
+                        ps.translate(-Minecraft.getInstance().font.width(String.valueOf(roller.getRoll()))/2F, -Minecraft.getInstance().font.lineHeight/2F, 0);
+                        int roll = roller.getRoll();
+                        if(roller.getRollTicks() < 10) {
+                            roll = roller.getFakeRoll();
+                        }
+                        Component comp = Component.literal(String.valueOf(roll));
+                        Minecraft.getInstance().font.drawInBatch8xOutline(comp.getVisualOrderText(), 0f, 0f, 0xFFFFFF, 0x000000, ps.last().pose(), event.getMultiBufferSource(), LightTexture.FULL_BRIGHT);
+                        RenderSystem.disableBlend();
 
-            ps.translate(0.0, 0.0, 0.025f);
-            // TODO: SHOW DICE ROLL!! ADD PARCHMENT!!
-            RenderSystem.disableBlend();
+                        ps.popPose();
+                    }
+                });
+            }
 
-            ps.popPose();
         }
         @SubscribeEvent
         public static void onHudRender(RenderGuiOverlayEvent.Post event) {
@@ -137,49 +163,48 @@ public class ErosianMagicClient {
             int guiLeft = (width - 312) / 2;
             int guiTop = (height - 208) / 2;
             QuickChant.renderChant(event.getGuiGraphics(), guiLeft, guiTop, 0, 0, event.getPartialTick());
+
+            PoseStack ps = event.getGuiGraphics().pose();
+            ps.pushPose();
+            Player player = Minecraft.getInstance().player;
+            player.getCapability(IRoller.INSTANCE).ifPresent(roller -> {
+                if(!roller.shouldDisplayRoll()) return;
+                GuiGraphics guiGraphics = event.getGuiGraphics();
+                ps.translate(width/2f,  height - 64, 0);
+                float scalar = roller.getRollTicks()/10F;
+                ps.scale(scalar, scalar, scalar);
+                float rot = (float) Math.min(360.0f, Mth.lerp(roller.getRollTicks()/10f, 0, 360) + event.getPartialTick());
+                ps.mulPose(Axis.ZP.rotationDegrees(rot));
+                Matrix4f matrix = ps.last().pose();
+                float size = 10F;
+                RenderSystem.disableBlend();
+                RenderSystem.enableDepthTest();
+                RenderSystem.defaultBlendFunc();
+                RenderSystem.setShader(GameRenderer::getPositionTexShader);
+                RenderSystem.setShaderTexture(0, DICE);
+
+                Tesselator tessellator = Tesselator.getInstance();
+                BufferBuilder buffer = tessellator.getBuilder();
+                buffer.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_TEX_COLOR);
+                buffer.vertex(matrix, -size, -size, 0).uv(0, 0).color(255, 255, 255, 255).endVertex();
+                buffer.vertex(matrix, -size, size, 0).uv(0, 1).color(255, 255, 255, 255).endVertex();
+                buffer.vertex(matrix, size, size, 0).uv(1, 1).color(255, 255, 255, 255).endVertex();
+                buffer.vertex(matrix, size, -size, 0).uv(1, 0).color(255, 255, 255, 255).endVertex();
+                tessellator.end();
+                ps.translate(0.0, 0.0, 0.025f);
+                int roll = roller.getRoll();
+                if(roller.getRollTicks() < 10) {
+                    roll = roller.getFakeRoll();
+                }
+                Component comp = Component.literal(String.valueOf(roll));
+                float textWidth = Minecraft.getInstance().font.width(comp.getVisualOrderText());
+                Minecraft.getInstance().font.drawInBatch8xOutline(comp.getVisualOrderText(), -textWidth/2, -Minecraft.getInstance().font.lineHeight/2f, 0xFFFFFF, 0x000000, ps.last().pose(), guiGraphics.bufferSource(), LightTexture.FULL_BRIGHT);
+
+            });
+            ps.popPose();
         }
 
         private static final Vector3f BARD_COLOR = new Vector3f(1.0f, 0.666667f, 0.0f);
-//        @SubscribeEvent
-//        public static void onPlayerRender(RenderPlayerEvent.Pre event) {
-//            if(event.getEntity() == null) return;
-//            Player player = event.getEntity();
-//            player.getCapability(IBard.INSTANCE).ifPresent(bard -> {
-//                if(bard.isBard()){
-//                    VertexConsumer consumer = event.getMultiBufferSource().getBuffer(RenderType.energySwirl(SpellRenderingHelper.SOLID, 0, 0));
-//                    PoseStack poseStack = event.getPoseStack();
-//                    float pPartialTick = event.getPartialTick();
-//                    int light = event.getPackedLight();
-//                    var color = BARD_COLOR;
-//                    poseStack.pushPose();
-//                    PoseStack.Pose pose = poseStack.last();
-//                    Matrix4f poseMatrix = pose.pose();
-//                    Matrix3f normalMatrix = pose.normal();
-//
-//                    float radius = 8;
-//                    int segments = (int) (5 * radius + 9);
-//                    float angle = 2 * Mth.PI / segments;
-//                    float entityY = (float) Mth.lerp(pPartialTick, player.yOld, player.getY());
-//
-//                    for (int i = 0; i < segments; i++) {
-//                        float theta = angle * i;
-//                        float theta2 = angle * (i + 1);
-//                        float x1 = radius * Mth.cos(theta);
-//                        float x2 = radius * Mth.cos(theta2);
-//                        float z1 = radius * Mth.sin(theta);
-//                        float z2 = radius * Mth.sin(theta2);
-//
-//                        float y1 = Utils.findRelativeGroundLevel(player.level(), player.position().add(x1, player.getBbHeight(), z1), (int) (player.getBbHeight() * 2.5)) - entityY;
-//                        float y2 = Utils.findRelativeGroundLevel(player.level(), player.position().add(x2, player.getBbHeight(), z2), (int) (player.getBbHeight() * 2.5)) - entityY;
-//                        consumer.vertex(poseMatrix, x2, y2, z2).color(color.x(), color.y(), color.z(), 1).uv(0f, 1f).overlayCoords(OverlayTexture.NO_OVERLAY).uv2(light * 4).normal(normalMatrix, 0f, 1f, 0f).endVertex();
-//                        consumer.vertex(poseMatrix, x2, y2 + 0.6f, z2).color(0, 0, 0, 1).uv(0f, 0f).overlayCoords(OverlayTexture.NO_OVERLAY).uv2(light * 4).normal(normalMatrix, 0f, 1f, 0f).endVertex();
-//                        consumer.vertex(poseMatrix, x1, y1 + 0.6f, z1).color(0, 0, 0, 1).uv(1f, 0f).overlayCoords(OverlayTexture.NO_OVERLAY).uv2(light * 4).normal(normalMatrix, 0f, 1f, 0f).endVertex();
-//                        consumer.vertex(poseMatrix, x1, y1, z1).color(color.x(), color.y(), color.z(), 1).uv(1f, 1f).overlayCoords(OverlayTexture.NO_OVERLAY).uv2(light * 4).normal(normalMatrix, 0f, 1f, 0f).endVertex();
-//                    }
-//                    poseStack.popPose();
-//                }
-//            });
-//        }
 
         public static final KeyMapping KEY_1 = new KeyMapping("key.erosianmagic.1", GLFW.GLFW_KEY_1, "key.erosianmagic.category");
         public static final KeyMapping KEY_2 = new KeyMapping("key.erosianmagic.2", GLFW.GLFW_KEY_2, "key.erosianmagic.category");
@@ -212,6 +237,19 @@ public class ErosianMagicClient {
             KEY_GRAVE_ACCENT.setKeyModifierAndCode(KeyModifier.ALT, KEY_GRAVE_ACCENT.getKey());
         }
 
+        @SubscribeEvent
+        public static void onTooltipRender(ItemTooltipEvent event) {
+            if(event.getItemStack().getItem() instanceof ArmorItem) {
+                event.getToolTip().removeIf(component ->
+                        component.getString().toLowerCase().contains("posture") ||
+                                component.getString().toLowerCase().contains("stun armor") ||
+                                component.getString().toLowerCase().contains("fracture") ||
+                                component.getString().toLowerCase().contains("weight")
+
+                );
+            }
+        }
+
         public static int cooldown = 0;
         @SubscribeEvent
         public static void onClickCapture(InputEvent.InteractionKeyMappingTriggered event) {
@@ -237,7 +275,7 @@ public class ErosianMagicClient {
                 } else if (entity.getItemInHand(InteractionHand.MAIN_HAND).getItem() instanceof InstrumentItem iItem && CLASS.equals("Bard")) {
                     ItemCooldowns cooldowns = entity.getCooldowns();
                     if (!cooldowns.isOnCooldown(iItem)) {
-                        aster.amo.erosianmagic.net.Networking.sendToServer(new SongPacket(new ResourceLocation("erosianmagic", "guiding_bolt"), false));
+                        aster.amo.erosianmagic.net.Networking.sendToServer(new SongPacket(new ResourceLocation("erosianmagic", "vicious_mockery"), false));
                         AttributeInstance cdr = entity.getAttribute(AttributeRegistry.COOLDOWN_REDUCTION.get());
                         entity.getCooldowns().addCooldown(iItem, (int) (30 * (1 - (cdr.getValue() - 1))));
                     }
@@ -270,10 +308,10 @@ public class ErosianMagicClient {
                 if(Minecraft.getInstance().options.getCameraType() == CameraType.THIRD_PERSON_BACK) {
                     Minecraft.getInstance().options.setCameraType(CameraType.THIRD_PERSON_FRONT);
                 }
-                if((stack.getItem() instanceof WeaponItem || ClientMagicData.isCasting() || aimedItems.stream().map(RegistryObject::get).anyMatch(stack::is)) && !shouldAim) {
+                if((stack.getItem() instanceof WeaponItem ||stack.getItem() instanceof SwordItem || ClientMagicData.isCasting() || aimedItems.stream().map(RegistryObject::get).anyMatch(stack::is)) && !shouldAim) {
                     shouldAim = true;
                     ThirdPersonPerspective.Options.isForceKeepAiming = true;
-                } else if(!(stack.getItem() instanceof WeaponItem || ClientMagicData.isCasting() || aimedItems.stream().map(RegistryObject::get).anyMatch(stack::is)) && shouldAim) {
+                } else if(!(stack.getItem() instanceof WeaponItem || stack.getItem() instanceof SwordItem || ClientMagicData.isCasting() || aimedItems.stream().map(RegistryObject::get).anyMatch(stack::is)) && shouldAim) {
                     shouldAim = false;
                     ThirdPersonPerspective.Options.isForceKeepAiming = false;
                 }
@@ -291,8 +329,8 @@ public class ErosianMagicClient {
             } else if (KEY_2.consumeClick() && KnowledgeUtil.knowsSign(entity, Signs.SACRED_SIGN)) {
                 QuickChant.add(Signs.SACRED_SIGN);
                 entity.playNotifySound((SoundEvent) EidolonSounds.SELECT_RUNE.get(), SoundSource.NEUTRAL, 0.5F, entity.level().random.nextFloat() * 0.25F + 0.75F);
-            } else if (KEY_3.consumeClick() && KnowledgeUtil.knowsSign(entity, Signs.BLOOD_SIGN)) {
-                QuickChant.add(Signs.BLOOD_SIGN);
+            } else if (KEY_3.consumeClick() && KnowledgeUtil.knowsSign(entity, Signs.MAGIC_SIGN)) {
+                QuickChant.add(Signs.MAGIC_SIGN);
                 entity.playNotifySound((SoundEvent) EidolonSounds.SELECT_RUNE.get(), SoundSource.NEUTRAL, 0.5F, entity.level().random.nextFloat() * 0.25F + 0.75F);
             } else if (KEY_4.consumeClick() && KnowledgeUtil.knowsSign(entity, Signs.SOUL_SIGN)) {
                 QuickChant.add(Signs.SOUL_SIGN);
@@ -315,8 +353,8 @@ public class ErosianMagicClient {
             } else if (KEY_0.consumeClick() && KnowledgeUtil.knowsSign(entity, Signs.WARDING_SIGN)) {
                 QuickChant.add(Signs.WARDING_SIGN);
                 entity.playNotifySound((SoundEvent) EidolonSounds.SELECT_RUNE.get(), SoundSource.NEUTRAL, 0.5F, entity.level().random.nextFloat() * 0.25F + 0.75F);
-            } else if (KEY_MINUS.consumeClick() && KnowledgeUtil.knowsSign(entity, Signs.MAGIC_SIGN)) {
-                QuickChant.add(Signs.MAGIC_SIGN);
+            } else if (KEY_MINUS.consumeClick() && KnowledgeUtil.knowsSign(entity, Signs.BLOOD_SIGN)) {
+                QuickChant.add(Signs.BLOOD_SIGN);
                 entity.playNotifySound((SoundEvent) EidolonSounds.SELECT_RUNE.get(), SoundSource.NEUTRAL, 0.5F, entity.level().random.nextFloat() * 0.25F + 0.75F);
             } else if (KEY_GRAVE_ACCENT.consumeClick()) {
                 QuickChant.clear();

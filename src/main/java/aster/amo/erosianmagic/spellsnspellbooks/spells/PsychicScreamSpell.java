@@ -34,7 +34,7 @@ public class PsychicScreamSpell extends AbstractSpell {
         this.baseManaCost = 8;
     }
     @Override
-    public void onCast(Level level, int spellLevel, LivingEntity entity, MagicData playerMagicData) {
+    public void onCast(Level level, int spellLevel, LivingEntity entity, CastSource source, MagicData playerMagicData) {
         Vector3f facing = entity.getLookAngle().toVector3f();
         PsychicScreamParticleOptions options = new PsychicScreamParticleOptions(facing);
         ((ServerLevel) level).sendParticles(options,
@@ -49,7 +49,7 @@ public class PsychicScreamSpell extends AbstractSpell {
                 }
             }
         }
-        super.onCast(level, spellLevel, entity, playerMagicData);
+        super.onCast(level, spellLevel, entity, source, playerMagicData);
     }
     private float getTickDamage(int spellLevel, LivingEntity caster) {
         return getSpellPower(spellLevel, caster) * .25f;

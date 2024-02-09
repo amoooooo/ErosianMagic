@@ -22,7 +22,7 @@ public class TargetedAreaEntityMixin implements IExtendedTargetArea {
         this.erosianMagic$endless = endless;
     }
 
-    @Inject(method = "tick", at = @At("HEAD"), cancellable = true)
+    @Inject(method = "m_8119_", at = @At("HEAD"), cancellable = true, remap = false)
     private void tick(CallbackInfo info) {
         if (erosianMagic$isEndless()) {
             info.cancel();

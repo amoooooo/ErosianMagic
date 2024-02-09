@@ -61,7 +61,7 @@ public class BestowCurseSpell extends AbstractSpell {
     }
 
     @Override
-    public void onCast(Level level, int spellLevel, LivingEntity entity, MagicData playerMagicData) {
+    public void onCast(Level level, int spellLevel, LivingEntity entity, CastSource source, MagicData playerMagicData) {
         if (playerMagicData.getAdditionalCastData() instanceof CastTargetingData castTargetingData) {
             LivingEntity target = castTargetingData.getTarget((ServerLevel) level);
 
@@ -69,7 +69,7 @@ public class BestowCurseSpell extends AbstractSpell {
                 target.addEffect(new MobEffectInstance(MobEffectRegistry.CURSED.get(), 100 * spellLevel, spellLevel));
             }
         }
-        super.onCast(level, spellLevel, entity, playerMagicData);
+        super.onCast(level, spellLevel, entity, source, playerMagicData);
     }
 
     @Override

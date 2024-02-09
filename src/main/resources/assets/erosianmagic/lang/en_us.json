@@ -43,9 +43,12 @@
   "spell.erosianmagic.shield_of_faith": "Shield of Faith",
   "spell.erosianmagic.mass_healing_word": "Mass Healing Word",
   "spell.erosianmagic.word_of_recall": "Word of Recall",
+  "spell.erosianmagic.vicious_mockery": "Vicious Mockery"
 
   "effect.erosianmagic.hopeful": "Hopeful",
   "effect.erosianmagic.beacon_of_hope": "Beacon of Hope",
   "ui.irons_spellbooks.luck": "%s%% increased Luck",
-  "ui.irons_spellbooks.armor": "%d Bonus Armor"
+  "ui.irons_spellbooks.armor": "%d Bonus Armor",
+  "ui.irons_spellbooks.casting_time": "%s Cast Time",
+  "ui.irons_spellbooks.magic_damage": "%s Arcane Damage"
 }

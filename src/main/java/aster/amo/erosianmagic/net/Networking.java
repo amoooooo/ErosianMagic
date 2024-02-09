@@ -24,8 +24,11 @@ public class Networking {
         INSTANCE.registerMessage(id++, SongPacket.class, SongPacket::encode, SongPacket::decode, SongPacket::consume, Optional.of(NetworkDirection.PLAY_TO_SERVER));
         INSTANCE.registerMessage(id++, BardSyncPacket.class, BardSyncPacket::encode, BardSyncPacket::decode, BardSyncPacket::handle, Optional.of(NetworkDirection.PLAY_TO_CLIENT));
         INSTANCE.registerMessage(id++, ClericSyncPacket.class, ClericSyncPacket::encode, ClericSyncPacket::decode, ClericSyncPacket::handle, Optional.of(NetworkDirection.PLAY_TO_CLIENT));
+        INSTANCE.registerMessage(id++, WitchSyncPacket.class, WitchSyncPacket::encode, WitchSyncPacket::decode, WitchSyncPacket::handle, Optional.of(NetworkDirection.PLAY_TO_CLIENT));
         INSTANCE.registerMessage(id++, ClientboundSyncMultiTargetingData.class, ClientboundSyncMultiTargetingData::encode, ClientboundSyncMultiTargetingData::decode, ClientboundSyncMultiTargetingData::handle, Optional.of(NetworkDirection.PLAY_TO_CLIENT));
         INSTANCE.registerMessage(id++, ClientboundClassPacket.class, ClientboundClassPacket::encode, ClientboundClassPacket::decode, ClientboundClassPacket::handle, Optional.of(NetworkDirection.PLAY_TO_CLIENT));
+        INSTANCE.registerMessage(id++, RollSyncPacket.class, RollSyncPacket::encode, RollSyncPacket::decode, RollSyncPacket::handle, Optional.of(NetworkDirection.PLAY_TO_CLIENT));
+        INSTANCE.registerMessage(id++, ClientboundEldritchBlastPacket.class, ClientboundEldritchBlastPacket::encode, ClientboundEldritchBlastPacket::decode, ClientboundEldritchBlastPacket::handle, Optional.of(NetworkDirection.PLAY_TO_CLIENT));
     }
 
     public static <MSG> void sendToDimension(Level world, MSG msg, ResourceKey<Level> dimension) {
