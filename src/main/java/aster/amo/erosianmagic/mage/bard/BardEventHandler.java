@@ -1,6 +1,6 @@
-package aster.amo.erosianmagic.bard;
+package aster.amo.erosianmagic.mage.bard;
 
-import aster.amo.erosianmagic.bard.song.*;
+import aster.amo.erosianmagic.mage.bard.song.*;
 import aster.amo.erosianmagic.net.Networking;
 import com.cstav.genshinstrument.event.InstrumentPlayedEvent;
 import net.minecraft.client.KeyMapping;

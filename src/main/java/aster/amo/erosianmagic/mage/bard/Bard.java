@@ -1,7 +1,6 @@
-package aster.amo.erosianmagic.bard;
+package aster.amo.erosianmagic.mage.bard;
 
-import aster.amo.erosianmagic.client.ErosianMagicClient;
-import aster.amo.erosianmagic.net.BardSyncPacket;
+import aster.amo.erosianmagic.net.classsync.BardSyncPacket;
 import aster.amo.erosianmagic.net.Networking;
 import aster.amo.erosianmagic.registry.MobEffectRegistry;
 import aster.amo.erosianmagic.spellsnspellbooks.ClassSpells;
@@ -11,8 +10,6 @@ import io.redspace.ironsspellbooks.api.magic.MagicData;
 import io.redspace.ironsspellbooks.api.spells.AbstractSpell;
 import io.redspace.ironsspellbooks.api.util.Utils;
 import io.redspace.ironsspellbooks.entity.spells.target_area.TargetedAreaEntity;
-import io.redspace.ironsspellbooks.spells.TargetAreaCastData;
-import net.minecraft.client.Minecraft;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerLevel;
@@ -124,7 +121,7 @@ public class Bard implements IBard, INBTSerializable<CompoundTag> {
         if(isClass) {
             List<Supplier<AbstractSpell>> spells = ClassSpells.CLASS_SPELLS.get("Bard");
             MagicData.getPlayerMagicData(player).getSyncedData().forgetAllSpells();
-            spells.forEach(spell -> MagicData.getPlayerMagicData(player).getSyncedData().learnSpell(spell.get()));
+//            spells.forEach(spell -> MagicData.getPlayerMagicData(player).getSyncedData().learnSpell(spell.get()));
         }
     }
 

@@ -1,4 +1,4 @@
-package aster.amo.erosianmagic.bard;
+package aster.amo.erosianmagic.mage.bard;
 
 import aster.amo.erosianmagic.ErosianMagic;
 import net.minecraft.sounds.SoundEvent;

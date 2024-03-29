@@ -1,4 +1,4 @@
-package aster.amo.erosianmagic.witch.eidolon;
+package aster.amo.erosianmagic.divine.witch.eidolon;
 
 import elucent.eidolon.codex.*;
 import elucent.eidolon.registries.Registry;

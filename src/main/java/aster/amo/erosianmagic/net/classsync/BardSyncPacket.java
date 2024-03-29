@@ -1,6 +1,6 @@
-package aster.amo.erosianmagic.net;
+package aster.amo.erosianmagic.net.classsync;
 
-import aster.amo.erosianmagic.bard.IBard;
+import aster.amo.erosianmagic.mage.bard.IBard;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.entity.player.Player;
