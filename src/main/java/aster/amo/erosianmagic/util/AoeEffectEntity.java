@@ -2,15 +2,13 @@ package aster.amo.erosianmagic.util;
 
 import aster.amo.erosianmagic.registry.EntityRegistry;
 import io.redspace.ironsspellbooks.entity.spells.AoeEntity;
-import io.redspace.ironsspellbooks.entity.spells.magic_missile.MagicMissileProjectile;
 import io.redspace.ironsspellbooks.entity.spells.target_area.TargetedAreaEntity;
 import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.entity.projectile.Projectile;
 import net.minecraft.world.level.Level;
 
+import java.util.Optional;
 import java.util.function.Consumer;
 
 public class AoeEffectEntity extends AoeEntity {
@@ -50,8 +48,8 @@ public class AoeEffectEntity extends AoeEntity {
     }
 
     @Override
-    public ParticleOptions getParticle() {
-        return particle;
+    public Optional<ParticleOptions> getParticle() {
+        return Optional.ofNullable(particle);
     }
 
     @Override

@@ -85,7 +85,7 @@ public class EldritchBlastSpell extends AbstractSpell {
             DelayHandler.addDelay(i * delay, () -> {
                 Networking.sendToTracking(level, entity.blockPosition(), new ClientboundEldritchBlastPacket(entity.getUUID()));
                 HitResult hitResult = Utils.raycastForEntity(level, entity, getRange(spellLevel, entity), true, 0.15F);
-                level.addFreshEntity(new EldritchBlastVisualEntity(level, entity.getEyePosition(), hitResult.getLocation(), entity));
+                level.addFreshEntity(new EldritchBlastVisualEntity(level, entity.position(), hitResult.getLocation(), entity));
                 if (hitResult.getType() == HitResult.Type.ENTITY) {
                     Entity target = ((EntityHitResult)hitResult).getEntity();
                     if (target instanceof LivingEntity) {

@@ -1,9 +1,11 @@
 package aster.amo.erosianmagic;
 
-import aster.amo.erosianmagic.bard.IBard;
-import aster.amo.erosianmagic.cleric.ICleric;
-import aster.amo.erosianmagic.cleric.PrayerRegistry;
-import aster.amo.erosianmagic.cleric.chapel.IWorshipper;
+import aster.amo.erosianmagic.mage.bard.IBard;
+import aster.amo.erosianmagic.divine.cleric.ICleric;
+import aster.amo.erosianmagic.divine.cleric.PrayerRegistry;
+import aster.amo.erosianmagic.divine.cleric.chapel.IWorshipper;
+import aster.amo.erosianmagic.mage.bard.song.SongRegistry;
+import aster.amo.erosianmagic.mage.machinist.IMachinist;
 import aster.amo.erosianmagic.net.ClientboundClassPacket;
 import aster.amo.erosianmagic.net.CombatTimerPacket;
 import aster.amo.erosianmagic.net.Networking;
@@ -11,44 +13,56 @@ import aster.amo.erosianmagic.particle.ParticleRegistry;
 import aster.amo.erosianmagic.registry.AttributeRegistry;
 import aster.amo.erosianmagic.registry.EntityRegistry;
 import aster.amo.erosianmagic.registry.MobEffectRegistry;
+import aster.amo.erosianmagic.rogue.IRogue;
 import aster.amo.erosianmagic.rolls.IRoller;
 import aster.amo.erosianmagic.spellsnspellbooks.ClassSpells;
 import aster.amo.erosianmagic.util.BossUtil;
+import aster.amo.erosianmagic.util.ClassUtils;
 import aster.amo.erosianmagic.util.DelayHandler;
-import aster.amo.erosianmagic.witch.eidolon.ChantRegistry;
+import aster.amo.erosianmagic.util.IClass;
+import aster.amo.erosianmagic.divine.witch.IWitch;
+import aster.amo.erosianmagic.divine.witch.eidolon.ChantRegistry;
 import aster.amo.erosianmagic.spellsnspellbooks.SpellRegistry;
 import com.cstav.genshinstrument.item.InstrumentItem;
 import com.flansmod.common.item.GunItem;
+import com.google.common.collect.ArrayListMultimap;
+import com.google.common.collect.Multimap;
 import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.logging.LogUtils;
 import dev.shadowsoffire.apotheosis.adventure.loot.LootCategory;
+import elucent.eidolon.api.spells.Sign;
+import elucent.eidolon.common.item.CodexItem;
+import elucent.eidolon.common.spell.StaticSpell;
 import elucent.eidolon.registries.Signs;
+import elucent.eidolon.registries.Spells;
 import elucent.eidolon.util.KnowledgeUtil;
+import forge.net.mca.entity.VillagerEntityMCA;
 import io.redspace.ironsspellbooks.api.events.ChangeManaEvent;
 import io.redspace.ironsspellbooks.api.magic.MagicData;
+import io.redspace.ironsspellbooks.api.spells.AbstractSpell;
+import io.redspace.ironsspellbooks.api.spells.SchoolType;
 import net.minecraft.ChatFormatting;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.commands.SharedSuggestionProvider;
 import net.minecraft.commands.arguments.EntityArgument;
-import net.minecraft.core.registries.Registries;
-import net.minecraft.data.DataProvider;
-import net.minecraft.data.tags.TagsProvider;
+import net.minecraft.commands.arguments.coordinates.Vec3Argument;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.tags.TagKey;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.Attributes;
+import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.npc.Villager;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.Projectile;
+import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.common.Tags;
-import net.minecraftforge.common.data.ForgeEntityTypeTagsProvider;
+import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.INBTSerializable;
 import net.minecraftforge.event.AttachCapabilitiesEvent;
 import net.minecraftforge.event.RegisterCommandsEvent;
@@ -65,10 +79,13 @@ import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.config.ModConfig;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
+import net.minecraftforge.registries.ForgeRegistries;
 import org.slf4j.Logger;
 
-import java.util.List;
-import java.util.UUID;
+import java.io.File;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Mod(ErosianMagic.MODID)
@@ -78,6 +95,7 @@ public class ErosianMagic {
     public static final Logger LOGGER = LogUtils.getLogger();
     private static long lastDamagedTime = 0;
     public static LootCategory INSTRUMENT = LootCategory.register(LootCategory.SWORD, "instrument", s -> s.getItem() instanceof InstrumentItem, arr(EquipmentSlot.MAINHAND, EquipmentSlot.OFFHAND));
+    public static LootCategory CODEX = LootCategory.register(LootCategory.SWORD, "codex", s -> s.getItem() instanceof CodexItem, arr(EquipmentSlot.MAINHAND, EquipmentSlot.OFFHAND));
     public static LootCategory FIREARM = LootCategory.register(LootCategory.SWORD, "firearm", s -> s.getItem() instanceof GunItem, arr(EquipmentSlot.MAINHAND));
     public ErosianMagic() {
         IEventBus modEventBus = FMLJavaModLoadingContext.get().getModEventBus();
@@ -122,8 +140,11 @@ public class ErosianMagic {
             if (event.getObject() instanceof Player) {
                 event.addCapability(new ResourceLocation(MODID, "bard"), new IBard.Provider());
                 event.addCapability(new ResourceLocation(MODID, "cleric"), new ICleric.Provider());
+                event.addCapability(new ResourceLocation(MODID, "witch"), new IWitch.Provider());
+                event.addCapability(new ResourceLocation(MODID, "machinist"), new IMachinist.Provider());
+                event.addCapability(new ResourceLocation(MODID, "rogue"), new IRogue.Provider());
             }
-            if(event.getObject() instanceof Villager) {
+            if(event.getObject() instanceof VillagerEntityMCA) {
                 event.addCapability(new ResourceLocation(MODID, "worshipper"), new IWorshipper.Provider());
             }
             if(event.getObject() instanceof LivingEntity){
@@ -133,38 +154,27 @@ public class ErosianMagic {
 
         @SubscribeEvent
         public static void playerClone(PlayerEvent.Clone event) {
-            event.getOriginal().getCapability(ICleric.INSTANCE).ifPresent(original -> {
-                event.getEntity().getCapability(ICleric.INSTANCE).ifPresent(cleric -> {
-                    ((INBTSerializable<CompoundTag>) cleric).deserializeNBT(((INBTSerializable<CompoundTag>) original).serializeNBT());
-                    cleric.sync(event.getEntity());
+            ClassUtils.CLASSES.values().forEach(capability -> {
+                event.getOriginal().getCapability(capability).ifPresent(original -> {
+                    event.getEntity().getCapability(capability).ifPresent(clazz -> {
+                        ((INBTSerializable<CompoundTag>) clazz).deserializeNBT(((INBTSerializable<CompoundTag>) original).serializeNBT());
+                        clazz.sync(event.getEntity());
+                    });
                 });
+                event.getOriginal().getCapability(capability).invalidate();
             });
-            event.getOriginal().getCapability(ICleric.INSTANCE).invalidate();
-            event.getOriginal().getCapability(IBard.INSTANCE).ifPresent(original -> {
-                event.getEntity().getCapability(IBard.INSTANCE).ifPresent(bard -> {
-                    ((INBTSerializable<CompoundTag>) bard).deserializeNBT(((INBTSerializable<CompoundTag>) original).serializeNBT());
-                    bard.sync(event.getEntity());
-                });
-            });
-            event.getOriginal().getCapability(IBard.INSTANCE).invalidate();
         }
 
         @SubscribeEvent
         public static void onLogin(PlayerEvent.PlayerLoggedInEvent event) {
             Player player = event.getEntity();
-            player.getCapability(ICleric.INSTANCE).ifPresent(cleric ->{
-                if(cleric.isChosenClass() && cleric.hasTemple()) {
+            IClass chosenClass = ClassUtils.getChosenClass(player);
+            if(chosenClass != null) {
+                Networking.sendTo(player, new ClientboundClassPacket(chosenClass.getClassName()));
+                if(chosenClass instanceof ICleric cleric && cleric.hasTemple()) {
                     player.sendSystemMessage(Component.literal("You have " + cleric.getWorshippers().size() + " worshippers."));
                 }
-                if(cleric.isChosenClass()) {
-                    Networking.sendTo(player, new ClientboundClassPacket(cleric.getClassName()));
-                }
-            });
-            player.getCapability(IBard.INSTANCE).ifPresent(bard -> {
-                if(bard.isChosenClass()) {
-                    Networking.sendTo(player, new ClientboundClassPacket(bard.getClassName()));
-                }
-            });
+            }
         }
         @SubscribeEvent
         public static void onHurt(LivingHurtEvent event) {
@@ -371,8 +381,36 @@ public class ErosianMagic {
         public static void onCommandRegister(RegisterCommandsEvent event) {
             LiteralArgumentBuilder<CommandSourceStack> builder = LiteralArgumentBuilder.literal("erosianmagic");
             builder.requires((commandSource) -> commandSource.hasPermission(3))
+                    .then(Commands.literal("dumpSpells")
+                            .executes((commandSource) -> {
+                                Path writer = null;
+                                try {
+                                    File dir = new File("./erosianmagic");
+                                    if(!dir.exists()){
+                                        dir.mkdir();
+                                    }
+                                    writer = Path.of("./erosianmagic/spells.txt");
+                                    Collection<AbstractSpell> spells = io.redspace.ironsspellbooks.api.registry.SpellRegistry.REGISTRY.get().getValues();
+                                    Multimap<SchoolType, AbstractSpell> spellMap = ArrayListMultimap.create();
+                                    List<String> lines = new ArrayList<>();
+                                    spells.forEach(spell -> {
+                                        spellMap.put(spell.getSchoolType(), spell);
+                                    });
+                                    for(SchoolType type : spellMap.keySet()){
+                                        lines.add("###  " + type.getId().getPath() + "  ###");
+                                        spellMap.get(type).forEach(spell -> {
+                                            lines.add(" - "+io.redspace.ironsspellbooks.api.registry.SpellRegistry.REGISTRY.get().getKey(spell).toString());
+                                        });
+                                    }
+
+                                    Files.write(writer, lines);
+                                } catch (Exception exception){
+                                    System.out.println(exception.getMessage());
+                                }
+                                return 1;
+                            }))
                     .then(Commands.literal("grant")
-                            .then(Commands.argument("sign", StringArgumentType.string())
+                            .then(Commands.argument("sign", StringArgumentType.greedyString())
                                     .suggests((commandContext, suggestionsBuilder) -> {
                                         return SharedSuggestionProvider.suggest(Signs.getSigns().stream().map(s -> s.getRegistryName().toString()).collect(Collectors.toList()), suggestionsBuilder);
                                     })
@@ -382,41 +420,71 @@ public class ErosianMagic {
                                         return 1;
                                     })))
                     .then(Commands.literal("set")
-                            .then(Commands.literal("bard")
-                                    .then(Commands.argument("player", EntityArgument.player())
+                            .then(Commands.argument("class", StringArgumentType.word())
+                                    .suggests((commandContext, suggestionsBuilder) -> {
+                                        return SharedSuggestionProvider.suggest(ClassUtils.CLASSES.keySet(), suggestionsBuilder);
+                                    }).then(Commands.argument("player", EntityArgument.player())
                                             .executes((commandSource) -> {
                                                 Player player = EntityArgument.getPlayer(commandSource, "player");
-                                                player.getCapability(IBard.INSTANCE).ifPresent((bard) -> {
-                                                    bard.setChosenClass(true, player);
-                                                    bard.sync(player);
-                                                    Networking.sendTo(player, new ClientboundClassPacket(bard.getClassName()));
+                                                String className = StringArgumentType.getString(commandSource, "class");
+                                                Capability<? extends IClass> clazz = ClassUtils.CLASSES.get(className);
+                                                player.getCapability(clazz).ifPresent(clazz1 -> {
+                                                    clazz1.setChosenClass(true, player);
+                                                    clazz1.sync(player);
+                                                    clazz1.onSetClass(player);
                                                 });
-                                                player.getCapability(ICleric.INSTANCE).ifPresent((cleric) -> {
-                                                    cleric.setChosenClass(false, player);
-                                                    cleric.sync(player);
-                                                });
+                                                IClass chosenClass = ClassUtils.getChosenClass(player);
+                                                if(chosenClass != null) {
+                                                    player.sendSystemMessage(Component.literal("Attempting to set class to: " + chosenClass.getClassName()));
+                                                    Networking.sendTo(player, new ClientboundClassPacket(chosenClass.getClassName()));
+                                                }
+                                                for (Capability<? extends IClass> capability : ClassUtils.CLASSES.values()) {
+                                                    if (capability != clazz) {
+                                                        player.getCapability(capability).ifPresent(clazz1 -> {
+                                                            clazz1.setChosenClass(false, player);
+                                                            clazz1.sync(player);
+                                                            clazz1.onSetOtherClass(player);
+                                                        });
+                                                    }
+                                                }
                                                 return 1;
-                                            })
-                                    )
-                            )
-                            .then(Commands.literal("cleric")
-                                    .then(Commands.argument("player", EntityArgument.player())
-                                            .executes((commandSource) -> {
-                                                Player player = EntityArgument.getPlayer(commandSource, "player");
-                                                player.getCapability(IBard.INSTANCE).ifPresent((bard) -> {
-                                                    bard.setChosenClass(false, player);
-                                                    bard.sync(player);
-                                                });
-                                                player.getCapability(ICleric.INSTANCE).ifPresent((cleric) -> {
-                                                    cleric.setChosenClass(true, player);
-                                                    cleric.sync(player);
-                                                    Networking.sendTo(player, new ClientboundClassPacket(cleric.getClassName()));
-                                                });
-                                                return 1;
-                                            })
-                                    )
-                            )
-                    )
+                                            }))))
+                    .then(Commands.literal("booktest")
+                            .then(Commands.argument("pos", Vec3Argument.vec3())
+                                    .executes((commandSource) -> {
+                                        Player player = commandSource.getSource().getPlayerOrException();
+                                        Vec3 pos = Vec3Argument.getVec3(commandSource, "pos");
+                                        SongRegistry.getSongs().forEach((rl, song) -> {
+                                            ItemEntity ie = new ItemEntity(player.level(), pos.x, pos.y, pos.z, song.toSignedBook());
+                                            player.level().addFreshEntity(ie);
+                                        });
+                                        return 1;
+                                    })))
+                    .then(Commands.literal("dumpSigns")
+                            .executes((commandSource) -> {
+                                Path writer = null;
+                                try {
+                                    File dir = new File("./erosianmagic");
+                                    if(!dir.exists()){
+                                        dir.mkdir();
+                                    }
+                                    writer = Path.of("./erosianmagic/signs.txt");
+                                    List<String> lines = new ArrayList<>();
+                                    Spells.getSpells().forEach(spell -> {
+                                        StringBuilder b = new StringBuilder();
+                                        b.append(spell.getRegistryName().toString()).append(": [");
+                                        ((StaticSpell)spell).signs.seq.forEach(sign -> {
+                                            b.append(sign.getRegistryName().getPath()).append(", ");
+                                        });
+                                        b.append("]");
+                                        lines.add(b.toString());
+                                    });
+                                    Files.write(writer, lines);
+                                } catch (Exception exception){
+                                    System.out.println(exception.getMessage());
+                                }
+                                return 1;
+                            }))
             ;
             event.getDispatcher().register(builder);
         }

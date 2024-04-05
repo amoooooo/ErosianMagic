@@ -175,6 +175,15 @@ repositories {
             includeGroupByRegex "com\\.github.*"
         }
     }
+    maven {
+        url = "https://maven.realrobotix.me/imgui-java"
+    }
+    maven {
+        url = "https://jitpack.io"
+
+    }
+    maven { url = "https://api.modrinth.com/maven" }
+    mavenCentral()
 }
 
 dependencies {
@@ -211,7 +220,7 @@ dependencies {
     // CURIOS *****************************************************************************************************
     runtimeOnly fg.deobf("top.theillusivec4.curios:curios-forge:${curios_version}")
 
-    implementation fg.deobf(fileTree(dir: 'libs', include: ['*.jar']))
+    implementation fg.deobf(fileTree(dir: 'libs', include: ['*.jar'])) // Include all jars in the libs folder
 
     implementation fg.deobf("maven.modrinth:UUD6Qkij:z0XEGXJ3")
 
@@ -226,13 +235,13 @@ dependencies {
     //runtimeOnly fg.deobf("vazkii.patchouli:Patchouli:${patchouli_version}")
 
     // APOTHEOSIS
-    compileOnly fg.deobf("curse.maven:apotheosis-${apotheosis_version}")
+    implementation fg.deobf("curse.maven:apotheosis-313970:5100485")
     compileOnly fg.deobf("curse.maven:apothic-attributes-${attributeslib_version}")
     compileOnly fg.deobf("curse.maven:placebo-${placebo_version}")
     implementation fg.deobf("com.teamresourceful:resourcefullib-forge:1.20.1-2.1.16")
     implementation fg.deobf("com.teamresourceful:resourcefulconfig-forge:1.20.1-2.1.0")
     implementation fg.deobf("com.teamresourceful:argonauts-forge:1.20.1-1.0.6")
-    implementation fg.deobf("foundry.veil:Veil-forge-1.20.1-quasar:1.0.0.20")
+//    implementation fg.deobf("foundry.veil:Veil-forge-1.20.1:1.0.0.114")
     //runtimeOnly fg.deobf("curse.maven:placebo-283644:4546960")
     //runtimeOnly fg.deobf("curse.maven:apotheosis-313970:4547399")
 

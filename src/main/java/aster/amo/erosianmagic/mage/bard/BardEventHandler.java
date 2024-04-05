@@ -1,5 +1,6 @@
 package aster.amo.erosianmagic.mage.bard;
 
+import aster.amo.erosianmagic.Config;
 import aster.amo.erosianmagic.mage.bard.song.*;
 import aster.amo.erosianmagic.net.Networking;
 import com.cstav.genshinstrument.event.InstrumentPlayedEvent;
@@ -43,6 +44,9 @@ public class BardEventHandler {
             }
             lastPlayed = currentTime;
             Song registeredSong = SongRegistry.getClosestMatch(currentSong);
+            if(Config.debug) {
+                Minecraft.getInstance().player.sendSystemMessage(Component.literal("Note: " + note.index() + " Pitch: " + pitch.name() + " Time: " + note.interval()));
+            }
             if(registeredSong != null) {
                 ResourceLocation id = SongRegistry.getId(registeredSong);
                 Minecraft.getInstance().getSoundManager().play(SimpleSoundInstance.forMusic(SoundEvent.createVariableRangeEvent(new ResourceLocation("erosianmagic", id.getPath()))));

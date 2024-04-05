@@ -2,26 +2,21 @@ package aster.amo.erosianmagic.spellsnspellbooks.spells.entity;
 
 import aster.amo.erosianmagic.registry.EntityRegistry;
 import aster.amo.erosianmagic.registry.MobEffectRegistry;
-import io.redspace.ironsspellbooks.api.events.SpellHealEvent;
 import io.redspace.ironsspellbooks.api.magic.MagicData;
-import io.redspace.ironsspellbooks.api.registry.SchoolRegistry;
 import io.redspace.ironsspellbooks.api.util.Utils;
 import io.redspace.ironsspellbooks.entity.mobs.AntiMagicSusceptible;
 import io.redspace.ironsspellbooks.entity.spells.AoeEntity;
 import io.redspace.ironsspellbooks.registries.ParticleRegistry;
 import net.minecraft.core.particles.ParticleOptions;
-import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.ai.attributes.AttributeModifier;
-import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.projectile.Projectile;
 import net.minecraft.world.level.Level;
-import net.minecraftforge.common.MinecraftForge;
 
+import java.util.Optional;
 import java.util.UUID;
 
 public class FaerieFireAoe extends AoeEntity implements AntiMagicSusceptible {
@@ -63,8 +58,8 @@ public class FaerieFireAoe extends AoeEntity implements AntiMagicSusceptible {
     }
 
     @Override
-    public ParticleOptions getParticle() {
-        return ParticleRegistry.WISP_PARTICLE.get();
+    public Optional<ParticleOptions> getParticle() {
+        return Optional.of(ParticleRegistry.WISP_PARTICLE.get());
     }
 
     @Override

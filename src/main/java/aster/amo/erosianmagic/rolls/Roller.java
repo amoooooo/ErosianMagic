@@ -1,6 +1,5 @@
 package aster.amo.erosianmagic.rolls;
 
-import aster.amo.erosianmagic.cleric.chapel.IWorshipper;
 import aster.amo.erosianmagic.net.Networking;
 import aster.amo.erosianmagic.net.RollSyncPacket;
 import net.minecraft.nbt.CompoundTag;

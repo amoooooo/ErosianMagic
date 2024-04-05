@@ -6,6 +6,7 @@
   "refmap": "erosianmagic.refmap.json",
   "mixins": [
     "AbstractSpellMixin",
+    "ActionStackMixin",
     "EntityMixin",
     "TargetedAreaEntityMixin",
     "client.ClientInputEventsMixin",

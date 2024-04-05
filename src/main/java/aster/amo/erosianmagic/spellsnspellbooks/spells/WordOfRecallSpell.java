@@ -1,7 +1,7 @@
 package aster.amo.erosianmagic.spellsnspellbooks.spells;
 
 import aster.amo.erosianmagic.ErosianMagic;
-import aster.amo.erosianmagic.cleric.ICleric;
+import aster.amo.erosianmagic.divine.cleric.ICleric;
 import aster.amo.erosianmagic.util.IExtendedTargetArea;
 import io.redspace.ironsspellbooks.api.config.DefaultConfig;
 import io.redspace.ironsspellbooks.api.magic.MagicData;

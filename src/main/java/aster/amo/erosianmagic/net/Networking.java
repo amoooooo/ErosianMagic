@@ -1,6 +1,7 @@
 package aster.amo.erosianmagic.net;
 
-import aster.amo.erosianmagic.bard.song.SongPacket;
+import aster.amo.erosianmagic.mage.bard.song.SongPacket;
+import aster.amo.erosianmagic.net.classsync.*;
 import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
@@ -29,6 +30,10 @@ public class Networking {
         INSTANCE.registerMessage(id++, ClientboundClassPacket.class, ClientboundClassPacket::encode, ClientboundClassPacket::decode, ClientboundClassPacket::handle, Optional.of(NetworkDirection.PLAY_TO_CLIENT));
         INSTANCE.registerMessage(id++, RollSyncPacket.class, RollSyncPacket::encode, RollSyncPacket::decode, RollSyncPacket::handle, Optional.of(NetworkDirection.PLAY_TO_CLIENT));
         INSTANCE.registerMessage(id++, ClientboundEldritchBlastPacket.class, ClientboundEldritchBlastPacket::encode, ClientboundEldritchBlastPacket::decode, ClientboundEldritchBlastPacket::handle, Optional.of(NetworkDirection.PLAY_TO_CLIENT));
+        INSTANCE.registerMessage(id++, MachinistSyncPacket.class, MachinistSyncPacket::encode, MachinistSyncPacket::decode, MachinistSyncPacket::handle, Optional.of(NetworkDirection.PLAY_TO_CLIENT));
+        INSTANCE.registerMessage(id++, MageSyncPacket.class, MageSyncPacket::encode, MageSyncPacket::decode, MageSyncPacket::handle, Optional.of(NetworkDirection.PLAY_TO_CLIENT));
+        INSTANCE.registerMessage(id++, RogueSyncPacket.class, RogueSyncPacket::encode, RogueSyncPacket::decode, RogueSyncPacket::handle, Optional.of(NetworkDirection.PLAY_TO_CLIENT));
+        INSTANCE.registerMessage(id++, ClientboundInsultPacket.class, ClientboundInsultPacket::encode, ClientboundInsultPacket::decode, ClientboundInsultPacket::handle, Optional.of(NetworkDirection.PLAY_TO_CLIENT));
     }
 
     public static <MSG> void sendToDimension(Level world, MSG msg, ResourceKey<Level> dimension) {

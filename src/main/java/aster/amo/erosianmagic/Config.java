@@ -23,14 +23,19 @@ public class Config
     private static final ForgeConfigSpec.BooleanValue AUTO_THIRD_PERSON = BUILDER
             .comment("If true, automatically switches to third person when casting a spell")
             .define("autoThirdPerson", false);
+    private static final ForgeConfigSpec.BooleanValue DEBUG = BUILDER
+            .comment("If true, enables debug mode")
+            .define("debug", false);
 
     static final ForgeConfigSpec SPEC = BUILDER.build();
 
     public static boolean autoThirdPerson;
+    public static boolean debug;
 
     @SubscribeEvent
     static void onLoad(final ModConfigEvent event)
     {
         autoThirdPerson = AUTO_THIRD_PERSON.get();
+        debug = DEBUG.get();
     }
 }

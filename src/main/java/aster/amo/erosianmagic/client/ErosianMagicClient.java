@@ -1,15 +1,15 @@
 package aster.amo.erosianmagic.client;
 
 import aster.amo.erosianmagic.Config;
-import aster.amo.erosianmagic.bard.IBard;
-import aster.amo.erosianmagic.bard.song.SongPacket;
+import aster.amo.erosianmagic.mage.bard.song.SongPacket;
 import aster.amo.erosianmagic.particle.ParticleRegistry;
 import aster.amo.erosianmagic.particle.PsychicScreamParticle;
 import aster.amo.erosianmagic.registry.EntityRegistry;
 import aster.amo.erosianmagic.rolls.IRoller;
-import aster.amo.erosianmagic.util.ClassUtils;
-import aster.amo.erosianmagic.witch.eidolon.BookRegistry;
-import aster.amo.erosianmagic.witch.eidolon.QuickChant;
+import aster.amo.erosianmagic.divine.witch.eidolon.BookRegistry;
+import aster.amo.erosianmagic.divine.witch.eidolon.QuickChant;
+import aster.amo.erosianmagic.util.ClientClassUtils;
+import com.alrex.parcool.config.ParCoolConfig;
 import com.cstav.genshinstrument.item.InstrumentItem;
 import com.cstav.genshinstrument.item.ModItems;
 import com.mojang.blaze3d.systems.RenderSystem;
@@ -22,22 +22,16 @@ import elucent.eidolon.registries.Registry;
 import elucent.eidolon.registries.Signs;
 import elucent.eidolon.util.KnowledgeUtil;
 import io.redspace.ironsspellbooks.api.registry.AttributeRegistry;
-import io.redspace.ironsspellbooks.api.util.Utils;
 import io.redspace.ironsspellbooks.entity.spells.magic_arrow.MagicArrowRenderer;
 import io.redspace.ironsspellbooks.player.ClientMagicData;
-import io.redspace.ironsspellbooks.render.SpellRenderingHelper;
-import net.leawind.mc.thirdpersonperspective.ThirdPersonPerspective;
+import net.leawind.mc.thirdperson.ThirdPersonStatus;
 import net.minecraft.client.CameraType;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.client.model.EntityModel;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.client.renderer.LightTexture;
-import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.entity.NoopRenderer;
-import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvent;
@@ -56,18 +50,19 @@ import net.minecraftforge.client.gui.overlay.VanillaGuiOverlay;
 import net.minecraftforge.client.settings.KeyModifier;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.entity.player.ItemTooltipEvent;
-import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.registries.RegistryObject;
-import org.joml.Matrix3f;
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
 import org.lwjgl.glfw.GLFW;
 import yesman.epicfight.world.item.WeaponItem;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 
 import static aster.amo.erosianmagic.ErosianMagic.MODID;
 
@@ -102,6 +97,7 @@ public class ErosianMagicClient {
     @Mod.EventBusSubscriber(modid = MODID, bus = Mod.EventBusSubscriber.Bus.FORGE, value = Dist.CLIENT)
     static
     class ErosianMagicClientForge {
+        static long lastTick = 0;
 
         private static final ResourceLocation DICE = new ResourceLocation("erosianmagic:textures/vfx/20_sided.png");
         @SubscribeEvent
@@ -303,17 +299,13 @@ public class ErosianMagicClient {
                 ItemStack stack = Minecraft.getInstance().player.getItemInHand(InteractionHand.MAIN_HAND);
                 if(Minecraft.getInstance().level.getGameTime() - lastCombatTime < 100 && Config.autoThirdPerson) {
                     Minecraft.getInstance().options.setCameraType(CameraType.THIRD_PERSON_BACK);
-                    Minecraft.getInstance().options.setCameraType(CameraType.THIRD_PERSON_FRONT);
-                }
-                if(Minecraft.getInstance().options.getCameraType() == CameraType.THIRD_PERSON_BACK) {
-                    Minecraft.getInstance().options.setCameraType(CameraType.THIRD_PERSON_FRONT);
                 }
                 if((stack.getItem() instanceof WeaponItem ||stack.getItem() instanceof SwordItem || ClientMagicData.isCasting() || aimedItems.stream().map(RegistryObject::get).anyMatch(stack::is)) && !shouldAim) {
                     shouldAim = true;
-                    ThirdPersonPerspective.Options.isForceKeepAiming = true;
+                    ThirdPersonStatus.isToggleToAiming = true;
                 } else if(!(stack.getItem() instanceof WeaponItem || stack.getItem() instanceof SwordItem || ClientMagicData.isCasting() || aimedItems.stream().map(RegistryObject::get).anyMatch(stack::is)) && shouldAim) {
                     shouldAim = false;
-                    ThirdPersonPerspective.Options.isForceKeepAiming = false;
+                    ThirdPersonStatus.isToggleToAiming = false;
                 }
             }
             if(cooldown > 0) cooldown--;

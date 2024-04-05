@@ -61,4 +61,6 @@ public class MobEffectRegistry {
 
     public static final RegistryObject<MobEffect> MAGIC_WEAPON = MOB_EFFECT_DEFERRED_REGISTER.register("magic_weapon", () -> new MagicWeaponEffect(MobEffectCategory.BENEFICIAL, 0x00ff00));
 
+    public static final RegistryObject<MobEffect> SPIRIT_GUARDIANS = MOB_EFFECT_DEFERRED_REGISTER.register("spirit_guardians", () -> new SpiritGuardiansEffect(MobEffectCategory.BENEFICIAL, 0x00ff00));
+
 }

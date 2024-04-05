@@ -3,7 +3,9 @@ package aster.amo.erosianmagic.net;
 import aster.amo.erosianmagic.client.ErosianMagicClient;
 import aster.amo.erosianmagic.spellsnspellbooks.data.ClientMultiTargetingData;
 import io.redspace.ironsspellbooks.player.ClientMagicData;
+import net.minecraft.client.Minecraft;
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.chat.Component;
 import net.minecraftforge.network.NetworkEvent;
 
 import java.util.List;
@@ -28,6 +30,9 @@ public class ClientboundClassPacket {
     public static void handle(ClientboundClassPacket packet, Supplier<NetworkEvent.Context> ctx) {
         ctx.get().enqueueWork(() -> {
             ErosianMagicClient.CLASS = packet.clazz;
+            if(Minecraft.getInstance().player.isCreative()){
+                Minecraft.getInstance().player.sendSystemMessage(Component.literal("Set class to: " + packet.clazz));
+            }
         });
         ctx.get().setPacketHandled(true);
 

@@ -25,6 +25,9 @@ public abstract class ClientInputEventsMixin {
 
     @Inject(method = "handleInputEvent", at = @At("HEAD"), cancellable = true, remap = false)
     private static void clientTick(int button, int action, CallbackInfo ci) {
+        if(Minecraft.getInstance().player == null) {
+            return;
+        }
         if((ClientClassUtils.isOneOfClasses("Witch", "Cleric") && button != KeyMappings.SPELL_WHEEL_KEYMAP.getKey().getValue())
                 || (ClientClassUtils.isOneOfClasses("Bard") && !(Minecraft.getInstance().player.getItemInHand(InteractionHand.MAIN_HAND).getItem() instanceof InstrumentItem))
         ) {

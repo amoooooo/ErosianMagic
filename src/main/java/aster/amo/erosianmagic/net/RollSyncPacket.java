@@ -1,21 +1,16 @@
 package aster.amo.erosianmagic.net;
 
-import aster.amo.erosianmagic.cleric.ICleric;
 import aster.amo.erosianmagic.rolls.IRoller;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.resources.sounds.SimpleSoundInstance;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.common.util.INBTSerializable;
 import net.minecraftforge.network.NetworkEvent;
 
-import java.util.UUID;
 import java.util.function.Supplier;
 
 public class RollSyncPacket {

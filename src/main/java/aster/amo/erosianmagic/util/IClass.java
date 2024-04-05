@@ -7,4 +7,6 @@ public interface IClass {
     boolean isChosenClass();
     String getClassName();
     void sync(Player player);
+    default void onSetOtherClass(Player player){}
+    default void onSetClass(Player player){}
 }

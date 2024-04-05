@@ -19,8 +19,6 @@ public class SpellRegistry {
     }
     public static final DeferredRegister<AbstractSpell> SPELLS = DeferredRegister.create(SPELL_REGISTRY_KEY, ErosianMagic.MODID);
     public static final RegistryObject<AbstractSpell> HEXBLOOD_SPELL = registerSpell(new HexbloodSpell());
-    public static final RegistryObject<AbstractSpell> PSYCHICSCREAM_SPELL = registerSpell(new PsychicScreamSpell());
-    public static final RegistryObject<AbstractSpell> BREATHE_EASY = registerSpell(new BreatheEasySpell());
     public static final RegistryObject<AbstractSpell> MANTLE_OF_INSPIRATION = registerSpell(new MantleOfInspirationSpell());
     public static final RegistryObject<AbstractSpell> HEAT_METAL = registerSpell(new HeatMetalSpell());
     public static final RegistryObject<AbstractSpell> FAERIE_FIRE = registerSpell(new FaerieFireSpell());
