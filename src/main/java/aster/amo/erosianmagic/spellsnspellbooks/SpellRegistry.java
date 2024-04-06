@@ -42,4 +42,5 @@ public class SpellRegistry {
     public static final RegistryObject<AbstractSpell> ELDRITCH_BLAST = registerSpell(new EldritchBlastSpell());
     public static final RegistryObject<AbstractSpell> VICIOUS_MOCKERY = registerSpell(new ViciousMockerySpell());
     public static final RegistryObject<AbstractSpell> MAGIC_WEAPON = registerSpell(new MagicWeaponSpell());
+    public static final RegistryObject<AbstractSpell> RAGE = registerSpell(new RageSpell());
 }

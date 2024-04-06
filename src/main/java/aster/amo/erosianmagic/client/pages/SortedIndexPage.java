@@ -17,7 +17,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class SortedIndexPage extends IndexPage {
-    final List<IndexEntry> entries = new ArrayList<>();
+    public final List<IndexEntry> entries = new ArrayList<>();
 
     public SortedIndexPage(IndexEntry... pages) {
         super(pages);
@@ -56,7 +56,7 @@ public class SortedIndexPage extends IndexPage {
         }
     }
 
-    private List<IndexEntry> sortEntries(){
+    public List<IndexEntry> sortEntries(){
         // return a list of entries that are unlocked
         return entries.stream().filter(IndexEntry::isUnlocked).toList();
     }

@@ -1,5 +1,7 @@
 package aster.amo.erosianmagic.util;
 
+import aster.amo.erosianmagic.fighter.IFighter;
+import aster.amo.erosianmagic.fighter.barbarian.IBarbarian;
 import aster.amo.erosianmagic.mage.IMage;
 import aster.amo.erosianmagic.mage.bard.IBard;
 import aster.amo.erosianmagic.divine.cleric.ICleric;
@@ -24,7 +26,9 @@ public class ClassUtils {
             "Cleric", ICleric.INSTANCE,
             "Witch", IWitch.INSTANCE,
             "Mage", IMage.INSTANCE,
-            "Rogue", IRogue.INSTANCE
+            "Rogue", IRogue.INSTANCE,
+            "Barbarian", IBarbarian.INSTANCE,
+            "Fighter", IFighter.INSTANCE
     );
     public static boolean isBard(Player player) {
         AtomicBoolean isBard = new AtomicBoolean(false);

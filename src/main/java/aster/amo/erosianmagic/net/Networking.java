@@ -34,6 +34,9 @@ public class Networking {
         INSTANCE.registerMessage(id++, MageSyncPacket.class, MageSyncPacket::encode, MageSyncPacket::decode, MageSyncPacket::handle, Optional.of(NetworkDirection.PLAY_TO_CLIENT));
         INSTANCE.registerMessage(id++, RogueSyncPacket.class, RogueSyncPacket::encode, RogueSyncPacket::decode, RogueSyncPacket::handle, Optional.of(NetworkDirection.PLAY_TO_CLIENT));
         INSTANCE.registerMessage(id++, ClientboundInsultPacket.class, ClientboundInsultPacket::encode, ClientboundInsultPacket::decode, ClientboundInsultPacket::handle, Optional.of(NetworkDirection.PLAY_TO_CLIENT));
+        INSTANCE.registerMessage(id++, FighterSyncPacket.class, FighterSyncPacket::encode, FighterSyncPacket::decode, FighterSyncPacket::handle, Optional.of(NetworkDirection.PLAY_TO_CLIENT));
+        INSTANCE.registerMessage(id++, BarbarianSyncPacket.class, BarbarianSyncPacket::encode, BarbarianSyncPacket::decode, BarbarianSyncPacket::handle, Optional.of(NetworkDirection.PLAY_TO_CLIENT));
+        INSTANCE.registerMessage(id++, ClientboundUpdateSpellsPacket.class, ClientboundUpdateSpellsPacket::encode, ClientboundUpdateSpellsPacket::decode, ClientboundUpdateSpellsPacket::handle, Optional.of(NetworkDirection.PLAY_TO_CLIENT));
     }
 
     public static <MSG> void sendToDimension(Level world, MSG msg, ResourceKey<Level> dimension) {

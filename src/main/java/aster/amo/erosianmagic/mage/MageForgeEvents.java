@@ -2,7 +2,6 @@ package aster.amo.erosianmagic.mage;
 
 import aster.amo.erosianmagic.util.ClassUtils;
 import dev.shadowsoffire.placebo.events.ItemUseEvent;
-import io.redspace.ironsspellbooks.api.events.SpellCastEvent;
 import io.redspace.ironsspellbooks.registries.ItemRegistry;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.InteractionResult;

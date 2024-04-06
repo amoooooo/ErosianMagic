@@ -39,7 +39,7 @@ public class Coven {
         covenLevel = Math.max(1, (int) Math.sqrt(members.size()));
     }
 
-    public void handleManaSplit(ServerLevel level, AbstractSpell spell, ServerPlayer caster, int spellLevel){
+    public int handleManaSplit(ServerLevel level, AbstractSpell spell, ServerPlayer caster, int spellLevel){
         // get all members within covenLevel^2 radius of the caster, and reduce their mana by 5% multiplicatively per member, and decrease the other members' mana by the reduced amount split evenly
         List<ServerPlayer> players = level.getPlayers(player -> player.distanceToSqr(caster) <= Math.max(4, covenLevel * covenLevel));
         int mana = spell.getManaCost(spellLevel, caster);
@@ -55,6 +55,8 @@ public class Coven {
                 magicData.setMana(magicData.getMana() - splitMana);
             }
         });
+        // return the reduced mana
+        return reducedMana;
     }
 
     public CompoundTag serializeNBT() {

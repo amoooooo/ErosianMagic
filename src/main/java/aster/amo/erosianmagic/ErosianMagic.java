@@ -1,5 +1,7 @@
 package aster.amo.erosianmagic;
 
+import aster.amo.erosianmagic.fighter.IFighter;
+import aster.amo.erosianmagic.fighter.barbarian.IBarbarian;
 import aster.amo.erosianmagic.mage.bard.IBard;
 import aster.amo.erosianmagic.divine.cleric.ICleric;
 import aster.amo.erosianmagic.divine.cleric.PrayerRegistry;
@@ -143,6 +145,8 @@ public class ErosianMagic {
                 event.addCapability(new ResourceLocation(MODID, "witch"), new IWitch.Provider());
                 event.addCapability(new ResourceLocation(MODID, "machinist"), new IMachinist.Provider());
                 event.addCapability(new ResourceLocation(MODID, "rogue"), new IRogue.Provider());
+                event.addCapability(new ResourceLocation(MODID, "fighter"), new IFighter.Provider());
+                event.addCapability(new ResourceLocation(MODID, "barbarian"), new IBarbarian.Provider());
             }
             if(event.getObject() instanceof VillagerEntityMCA) {
                 event.addCapability(new ResourceLocation(MODID, "worshipper"), new IWorshipper.Provider());
