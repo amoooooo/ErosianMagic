@@ -8,12 +8,15 @@
     "AbstractSpellMixin",
     "ActionStackMixin",
     "EntityMixin",
-    "TargetedAreaEntityMixin",
-    "client.ClientInputEventsMixin",
-    "client.LivingEntityRendererMixin"
+    "TargetedAreaEntityMixin"
   ],
   "client": [
-    "client.GuiMixin"
+    "client.CodexGuiAccessor",
+    "client.GuiMixin",
+    "client.ChapterAccessor",
+    "client.ClientInputEventsMixin",
+    "client.IndexEntryAccessor",
+    "client.LivingEntityRendererMixin"
   ],
   "injectors": {
     "defaultRequire": 1

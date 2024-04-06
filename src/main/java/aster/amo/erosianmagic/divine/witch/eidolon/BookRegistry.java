@@ -2,6 +2,7 @@ package aster.amo.erosianmagic.divine.witch.eidolon;
 
 import aster.amo.erosianmagic.client.chapter.PredicatedIndex;
 import aster.amo.erosianmagic.client.pages.SignClassSpellLockedEntry;
+import aster.amo.erosianmagic.client.pages.SortedIndexPage;
 import aster.amo.erosianmagic.divine.cleric.PrayerRegistry;
 import aster.amo.erosianmagic.spellsnspellbooks.SpellRegistry;
 import elucent.eidolon.codex.*;
@@ -341,7 +342,7 @@ public class BookRegistry {
                 new ChantPage("erosianmagic.codex.page.magic_missile.0", ChantRegistry.MAGIC_MISSILE),
                 new TextPage("erosianmagic.codex.page.magic_missile.1"));
 
-        MYSTIC_ARTS_INDEX = new PredicatedIndex("erosianmagic.codex.chapter.mystic_arts", new Page[]{new IndexPage(
+        MYSTIC_ARTS_INDEX = new PredicatedIndex("erosianmagic.codex.chapter.mystic_arts", new Page[]{new SortedIndexPage(
                 new SignClassSpellLockedEntry(MENDING_CHAPTER, "Cleric", MENDING.get(), new ItemStack(Items.AMETHYST_SHARD), Signs.WARDING_SIGN, Signs.SACRED_SIGN),
                 new SignClassSpellLockedEntry(TOLL_THE_DEAD_CHAPTER, "Cleric", TOLL_THE_DEAD.get(), new ItemStack(Items.AMETHYST_SHARD), Signs.DEATH_SIGN, Signs.SACRED_SIGN),
                 new SignClassSpellLockedEntry(INFILCT_WOUNDS_CHAPTER, "Cleric", INFLICT_WOUNDS.get(), new ItemStack(Items.AMETHYST_SHARD), Signs.BLOOD_SIGN, Signs.DEATH_SIGN),
@@ -349,7 +350,7 @@ public class BookRegistry {
                 new SignClassSpellLockedEntry(HEALING_WORD_CHAPTER, "Cleric", HEALING_WORD.get(), new ItemStack(Items.AMETHYST_SHARD), Signs.HARMONY_SIGN, Signs.HARMONY_SIGN),
                 new SignClassSpellLockedEntry(BLESS_CHAPTER, "Cleric", BLESS.get(), new ItemStack(Items.AMETHYST_SHARD), Signs.SACRED_SIGN, Signs.HARMONY_SIGN, Signs.MAGIC_SIGN),
                 new SignClassSpellLockedEntry(SHIELD_OF_FAITH_CHAPTER, "Cleric", SHIELD_OF_FAITH.get(), new ItemStack(Items.AMETHYST_SHARD), Signs.SACRED_SIGN, Signs.WARDING_SIGN)
-        ), new IndexPage(
+        ), new SortedIndexPage(
                 new SignClassSpellLockedEntry(PRAYER_OF_HEALING_CHAPTER, "Cleric", PRAYER_OF_HEALING.get(), new ItemStack(Items.AMETHYST_SHARD), Signs.HARMONY_SIGN, Signs.SACRED_SIGN, Signs.HARMONY_SIGN),
                 new SignClassSpellLockedEntry(WARDING_BOND_CHAPTER, "Cleric", WARDING_BOND.get(), new ItemStack(Items.AMETHYST_SHARD), Signs.SOUL_SIGN, Signs.WARDING_SIGN),
                 new SignClassSpellLockedEntry(MASS_HEALING_WORD_CHAPTER, "Cleric", MASS_HEALING_WORD.get(), new ItemStack(Items.AMETHYST_SHARD), Signs.HARMONY_SIGN, Signs.SACRED_SIGN, Signs.HARMONY_SIGN, Signs.SACRED_SIGN),
@@ -357,11 +358,11 @@ public class BookRegistry {
                 new SignClassSpellLockedEntry(FIRE_STORM_CHAPTER, "Cleric", BLAZE_STORM_SPELL.get(), new ItemStack(Items.AMETHYST_SHARD), Signs.FLAME_SIGN, Signs.MAGIC_SIGN, Signs.FLAME_SIGN),
                 new SignClassSpellLockedEntry(FIREBALL_CHAPTER, "Cleric", FIREBALL_SPELL.get(), new ItemStack(Items.AMETHYST_SHARD), Signs.FLAME_SIGN, Signs.MAGIC_SIGN),
                 new SignClassSpellLockedEntry(EARTHQUAKE_CHAPTER, "Cleric", EARTHQUAKE_SPELL.get(), new ItemStack(Items.AMETHYST_SHARD), Signs.MAGIC_SIGN, Signs.WARDING_SIGN, Signs.WINTER_SIGN)
-        ), new IndexPage(
+        ), new SortedIndexPage(
                 new SignClassSpellLockedEntry(BLIGHT_CHAPTER, "Cleric", BLIGHT_SPELL.get(), new ItemStack(Items.AMETHYST_SHARD), Signs.WICKED_SIGN, Signs.DEATH_SIGN, Signs.MAGIC_SIGN),
                 new SignClassSpellLockedEntry(WALL_OF_FIRE_CHAPTER, "Cleric", WALL_OF_FIRE_SPELL.get(), new ItemStack(Items.AMETHYST_SHARD), Signs.FLAME_SIGN, Signs.FLAME_SIGN, Signs.WINTER_SIGN),
                 new SignClassSpellLockedEntry(BEACON_OF_HOPE_CHAPTER, "Cleric", BEACON_OF_HOPE.get(), new ItemStack(Items.AMETHYST_SHARD), Signs.SACRED_SIGN, Signs.WARDING_SIGN, Signs.MIND_SIGN)
-        )}, new Page[]{new IndexPage(
+        )}, new Page[]{new SortedIndexPage(
                 new SignClassSpellLockedEntry(MAGIC_MISSILE_CHAPTER, "Witch", MAGIC_MISSILE_SPELL.get(), new ItemStack(Items.AMETHYST_SHARD), Signs.MAGIC_SIGN, Signs.MAGIC_SIGN, Signs.MAGIC_SIGN),
                 new SignClassSpellLockedEntry(COUNTERSPELL_CHAPTER, "Witch", COUNTERSPELL_SPELL.get(), new ItemStack(Items.AMETHYST_SHARD), Signs.MAGIC_SIGN, Signs.WARDING_SIGN, Signs.MIND_SIGN),
                 new SignClassSpellLockedEntry(DRAGON_BREATH_CHAPTER, "Witch", DRAGON_BREATH_SPELL.get(), new ItemStack(Items.AMETHYST_SHARD), Signs.FLAME_SIGN, Signs.FLAME_SIGN, Signs.FLAME_SIGN),
@@ -369,7 +370,7 @@ public class BookRegistry {
                 new SignClassSpellLockedEntry(SUMMON_ENDER_CHEST_CHAPTER, "Witch", SUMMON_ENDER_CHEST_SPELL.get(), new ItemStack(Items.AMETHYST_SHARD), Signs.WARDING_SIGN, Signs.WARDING_SIGN, Signs.SOUL_SIGN),
                 new SignClassSpellLockedEntry(RECALL_CHAPTER, "Witch", RECALL_SPELL.get(), new ItemStack(Items.AMETHYST_SHARD), Signs.WARDING_SIGN, Signs.MAGIC_SIGN, Signs.SOUL_SIGN),
                 new SignClassSpellLockedEntry(PORTAL_CHAPTER, "Witch", PORTAL_SPELL.get(), new ItemStack(Items.AMETHYST_SHARD), Signs.WARDING_SIGN, Signs.MAGIC_SIGN, Signs.WARDING_SIGN)
-        ), new IndexPage(
+        ), new SortedIndexPage(
                 new SignClassSpellLockedEntry(MAGIC_WEAPON_CHAPTER, "Witch", MAGIC_WEAPON.get(), new ItemStack(Items.AMETHYST_SHARD), Signs.MAGIC_SIGN, Signs.MAGIC_SIGN, Signs.MAGIC_SIGN),
                 new SignClassSpellLockedEntry(WARDING_WIND_CHAPTER, "Witch", WARDING_WIND.get(), new ItemStack(Items.AMETHYST_SHARD), Signs.WARDING_SIGN, Signs.WARDING_SIGN, Signs.WARDING_SIGN),
                 new SignClassSpellLockedEntry(FIRE_BREATH_CHAPTER, "Witch", FIRE_BREATH_SPELL.get(), new ItemStack(Items.AMETHYST_SHARD), Signs.FLAME_SIGN, Signs.FLAME_SIGN, Signs.FLAME_SIGN),
@@ -377,7 +378,7 @@ public class BookRegistry {
                 new SignClassSpellLockedEntry(HEAT_SURGE_CHAPTER, "Witch", HEAT_SURGE_SPELL.get(), new ItemStack(Items.AMETHYST_SHARD), Signs.FLAME_SIGN, Signs.FLAME_SIGN, Signs.FLAME_SIGN, Signs.MAGIC_SIGN),
                 new SignClassSpellLockedEntry(HEAT_METAL_CHAPTER, "Witch", HEAT_METAL.get(), new ItemStack(Items.AMETHYST_SHARD), Signs.FLAME_SIGN, Signs.FLAME_SIGN, Signs.FLAME_SIGN, Signs.WARDING_SIGN),
                 new SignClassSpellLockedEntry(FAERIE_FIRE_CHAPTER, "Witch", FAERIE_FIRE.get(), new ItemStack(Items.AMETHYST_SHARD), Signs.SACRED_SIGN, Signs.SACRED_SIGN, Signs.SACRED_SIGN)
-        ), new IndexPage(
+        ), new SortedIndexPage(
                 new SignClassSpellLockedEntry(ACUPUNCTURE_CHAPTER, "Witch", ACUPUNCTURE_SPELL.get(), new ItemStack(Items.AMETHYST_SHARD), Signs.WARDING_SIGN, Signs.MAGIC_SIGN, Signs.MIND_SIGN, Signs.WARDING_SIGN),
                 new SignClassSpellLockedEntry(BLOOD_NEEDLES_CHAPTER, "Witch", BLOOD_NEEDLES_SPELL.get(), new ItemStack(Items.AMETHYST_SHARD), Signs.BLOOD_SIGN, Signs.BLOOD_SIGN, Signs.BLOOD_SIGN, Signs.WARDING_SIGN),
                 new SignClassSpellLockedEntry(BLOOD_SLASH_CHAPTER, "Witch", BLOOD_SLASH_SPELL.get(), new ItemStack(Items.AMETHYST_SHARD), Signs.BLOOD_SIGN, Signs.BLOOD_SIGN, Signs.BLOOD_SIGN, Signs.DEATH_SIGN),
@@ -385,7 +386,7 @@ public class BookRegistry {
                 new SignClassSpellLockedEntry(RAY_OF_SIPHONING_CHAPTER, "Witch", RAY_OF_SIPHONING_SPELL.get(), new ItemStack(Items.AMETHYST_SHARD), Signs.MAGIC_SIGN, Signs.MAGIC_SIGN, Signs.DEATH_SIGN, Signs.WARDING_SIGN),
                 new SignClassSpellLockedEntry(TOLL_THE_DEAD_CHAPTER_WITCH, "Witch", TOLL_THE_DEAD.get(), new ItemStack(Items.AMETHYST_SHARD), Signs.DEATH_SIGN, Signs.DEATH_SIGN, Signs.SACRED_SIGN, Signs.WARDING_SIGN),
                 new SignClassSpellLockedEntry(SUMMON_VEX_CHAPTER, "Witch", SUMMON_VEX_SPELL.get(), new ItemStack(Items.AMETHYST_SHARD), Signs.WARDING_SIGN, Signs.SOUL_SIGN, Signs.MAGIC_SIGN, Signs.WARDING_SIGN)
-        ), new IndexPage(
+        ), new SortedIndexPage(
                 new SignClassSpellLockedEntry(ABYSSAL_SHROUD_CHAPTER, "Witch", ABYSSAL_SHROUD_SPELL.get(), new ItemStack(Items.AMETHYST_SHARD), Signs.WARDING_SIGN, Signs.DEATH_SIGN, Signs.WARDING_SIGN, Signs.FLAME_SIGN),
                 new SignClassSpellLockedEntry(SCULK_TENTACLES_CHAPTER, "Witch", SCULK_TENTACLES_SPELL.get(), new ItemStack(Items.AMETHYST_SHARD), Signs.WARDING_SIGN, Signs.MAGIC_SIGN, Signs.WARDING_SIGN, Signs.DEATH_SIGN),
                 new SignClassSpellLockedEntry(SONIC_BOOM_CHAPTER, "Witch", SONIC_BOOM_SPELL.get(), new ItemStack(Items.AMETHYST_SHARD), Signs.MAGIC_SIGN, Signs.MAGIC_SIGN, Signs.MAGIC_SIGN, Signs.WARDING_SIGN),
@@ -393,7 +394,7 @@ public class BookRegistry {
                 new SignClassSpellLockedEntry(TELEKINESIS_CHAPTER, "Witch", TELEKINESIS_SPELL.get(), new ItemStack(Items.AMETHYST_SHARD), Signs.MAGIC_SIGN, Signs.MAGIC_SIGN, Signs.WARDING_SIGN, Signs.FLAME_SIGN),
                 new SignClassSpellLockedEntry(ELDRITCH_BLAST_CHAPTER, "Witch", ELDRITCH_BLAST.get(), new ItemStack(Items.AMETHYST_SHARD), Signs.MAGIC_SIGN, Signs.MAGIC_SIGN, Signs.MAGIC_SIGN, Signs.FLAME_SIGN),
                 new SignClassSpellLockedEntry(BESTOW_CURSE_CHAPTER, "Witch", BESTOW_CURSE.get(), new ItemStack(Items.AMETHYST_SHARD), Signs.WARDING_SIGN, Signs.MAGIC_SIGN, Signs.DEATH_SIGN, Signs.FLAME_SIGN)
-        ), new IndexPage(
+        ), new SortedIndexPage(
                 new SignClassSpellLockedEntry(CONE_OF_COLD_CHAPTER, "Witch", CONE_OF_COLD_SPELL.get(), new ItemStack(Items.AMETHYST_SHARD), Signs.WINTER_SIGN, Signs.SACRED_SIGN, Signs.WARDING_SIGN, Signs.FLAME_SIGN),
                 new SignClassSpellLockedEntry(ELECTROCUTE_CHAPTER, "Witch", ELECTROCUTE_SPELL.get(), new ItemStack(Items.AMETHYST_SHARD), Signs.MAGIC_SIGN, Signs.MAGIC_SIGN, Signs.MAGIC_SIGN, Signs.MAGIC_SIGN, Signs.FLAME_SIGN),
                 new SignClassSpellLockedEntry(SHOCKWAVE_CHAPTER, "Witch", SHOCKWAVE_SPELL.get(), new ItemStack(Items.AMETHYST_SHARD), Signs.WARDING_SIGN, Signs.MAGIC_SIGN, Signs.WARDING_SIGN, Signs.FLAME_SIGN, Signs.WARDING_SIGN),
@@ -401,7 +402,7 @@ public class BookRegistry {
                 new SignClassSpellLockedEntry(PRAYER_OF_HEALING_CHAPTER_WITCH, "Witch", PRAYER_OF_HEALING.get(), new ItemStack(Items.AMETHYST_SHARD), Signs.SACRED_SIGN, Signs.SACRED_SIGN, Signs.SACRED_SIGN, Signs.WARDING_SIGN, Signs.SOUL_SIGN),
                 new SignClassSpellLockedEntry(WORD_OF_RECALL_CHAPTER_WITCH, "Witch", WORD_OF_RECALL.get(), new ItemStack(Items.AMETHYST_SHARD), Signs.WARDING_SIGN, Signs.MAGIC_SIGN, Signs.SOUL_SIGN, Signs.FLAME_SIGN, Signs.SACRED_SIGN),
                 new SignClassSpellLockedEntry(ACID_ORB_CHAPTER, "Witch", ACID_ORB_SPELL.get(), new ItemStack(Items.AMETHYST_SHARD), Signs.MAGIC_SIGN, Signs.MAGIC_SIGN, Signs.SACRED_SIGN, Signs.FLAME_SIGN, Signs.FLAME_SIGN)
-        ), new IndexPage(
+        ), new SortedIndexPage(
                 new SignClassSpellLockedEntry(BLIGHT_CHAPTER_WITCH, "Witch", BLIGHT_SPELL.get(), new ItemStack(Items.AMETHYST_SHARD), Signs.WICKED_SIGN, Signs.DEATH_SIGN, Signs.MAGIC_SIGN, Signs.FLAME_SIGN, Signs.FLAME_SIGN),
                 new SignClassSpellLockedEntry(SPIDER_ASPECT_CHAPTER, "Witch", SPIDER_ASPECT_SPELL.get(), new ItemStack(Items.AMETHYST_SHARD), Signs.SACRED_SIGN, Signs.WARDING_SIGN, Signs.SOUL_SIGN, Signs.WINTER_SIGN, Signs.FLAME_SIGN),
                 new SignClassSpellLockedEntry(FIREFLY_SWARM_CHAPTER, "Witch", FIREFLY_SWARM_SPELL.get(), new ItemStack(Items.AMETHYST_SHARD), Signs.FLAME_SIGN, Signs.FLAME_SIGN, Signs.SACRED_SIGN, Signs.MAGIC_SIGN, Signs.FLAME_SIGN),
