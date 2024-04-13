@@ -26,6 +26,7 @@ public class Bard implements IBard, INBTSerializable<CompoundTag> {
     boolean inspiring;
     boolean isBard;
     int entityId;
+    int level = 1;
 
     @Override
     public int getInspirationTime() {
@@ -46,6 +47,16 @@ public class Bard implements IBard, INBTSerializable<CompoundTag> {
     public void sync(Player player) {
         if(!player.level().isClientSide())
             Networking.sendToTracking(player.level(), player.blockPosition(), new BardSyncPacket(serializeNBT(), player.getUUID()));
+    }
+
+    @Override
+    public int getLevel() {
+        return level;
+    }
+
+    @Override
+    public void setLevel(int level) {
+        this.level = level;
     }
 
     @Override
@@ -103,6 +114,7 @@ public class Bard implements IBard, INBTSerializable<CompoundTag> {
         tag.putBoolean("inspiring", inspiring);
         tag.putInt("entityId", entityId);
         tag.putBoolean("isBard", isBard);
+        tag.putInt("level", level);
         return tag;
     }
 
@@ -113,6 +125,7 @@ public class Bard implements IBard, INBTSerializable<CompoundTag> {
         inspiring = nbt.getBoolean("inspiring");
         entityId = nbt.getInt("entityId");
         isBard = nbt.getBoolean("isBard");
+        level = nbt.getInt("level");
     }
 
     @Override

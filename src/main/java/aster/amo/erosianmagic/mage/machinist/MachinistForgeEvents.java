@@ -1,5 +1,6 @@
 package aster.amo.erosianmagic.mage.machinist;
 
+import com.rekindled.embers.item.AncientCodexItem;
 import dev.shadowsoffire.placebo.events.ItemUseEvent;
 import net.minecraft.network.chat.Component;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -17,7 +18,7 @@ public class MachinistForgeEvents {
                 isMachinist.set(true);
             }
         });
-        if(!isMachinist.get()) {
+        if(!isMachinist.get() && event.getItemStack().getItem() instanceof AncientCodexItem) {
             event.getEntity().displayClientMessage(Component.literal("You don't understand how to use this item!"), true);
             event.setCanceled(true);
         }

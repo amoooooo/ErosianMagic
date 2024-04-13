@@ -82,7 +82,7 @@ public class RageSpell extends AbstractSpell {
     }
     @Override
     public void onCast(Level level, int spellLevel, LivingEntity entity, CastSource source, MagicData playerMagicData) {
-        entity.addEffect(new MobEffectInstance(MobEffectRegistry.RAGE.get(), RageEffect.RAGE_DURATION[spellLevel], spellLevel));
+        entity.addEffect(new MobEffectInstance(MobEffectRegistry.RAGE.get(), RageEffect.RAGE_DURATION[Math.min(RageEffect.RAGE_DURATION.length, spellLevel)], spellLevel));
         super.onCast(level, spellLevel, entity, source, playerMagicData);
     }
 

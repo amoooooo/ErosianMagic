@@ -11,6 +11,7 @@ import net.minecraftforge.common.util.INBTSerializable;
 
 public class Rogue implements IRogue, INBTSerializable<CompoundTag> {
     private boolean chosenClass = false;
+    int level = 1;
     @Override
     public void setChosenClass(boolean isClass, Player player) {
         chosenClass = isClass;
@@ -36,29 +37,44 @@ public class Rogue implements IRogue, INBTSerializable<CompoundTag> {
     public CompoundTag serializeNBT() {
         CompoundTag nbt = new CompoundTag();
         nbt.putBoolean("chosenClass", chosenClass);
+        nbt.putInt("level", level);
         return nbt;
     }
 
     @Override
     public void deserializeNBT(CompoundTag nbt) {
         chosenClass = nbt.getBoolean("chosenClass");
+        level = nbt.getInt("level");
     }
 
     @Override
     public void onSetClass(Player player) {
         IRogue.super.onSetClass(player);
-        PermissionData.getCap(player).setStab(true);
+//        PermissionData.getCap(player).setStab(true);
+        PermissionData.getCap(player).setStab(false);
         if(!player.level().isClientSide) {
             ClassUtils.enableParcool((ServerPlayer) player);
         }
     }
 
     @Override
+    public int getLevel() {
+        return level;
+    }
+
+    @Override
+    public void setLevel(int level) {
+        this.level = level;
+    }
+
+    @Override
     public void onSetOtherClass(Player player) {
         IRogue.super.onSetOtherClass(player);
-        PermissionData.getCap(player).setStab(false);
         if(!player.level().isClientSide) {
             ClassUtils.disableParcool((ServerPlayer) player);
+        }
+        if(!ClassUtils.getChosenClassName(player).equals("Charlatan")) {
+            PermissionData.getCap(player).setStab(false);
         }
     }
 }

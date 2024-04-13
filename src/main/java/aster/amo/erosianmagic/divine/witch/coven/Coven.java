@@ -14,6 +14,7 @@ import java.util.UUID;
 
 public class Coven {
     List<UUID> members = new ArrayList<>();
+    List<Dedicant> dedicants = new ArrayList<>();
     int covenLevel = 1;
     boolean isRecruiting = false;
     public void addMember(UUID uuid) {
@@ -65,6 +66,9 @@ public class Coven {
         members.forEach(uuid -> list.add(StringTag.valueOf(uuid.toString())));
         nbt.put("members", list);
         nbt.putInt("covenLevel", covenLevel);
+        ListTag dedicantList = new ListTag();
+        dedicants.forEach(dedicant -> dedicantList.add(dedicant.serializeNBT()));
+        nbt.put("dedicants", dedicantList);
         return nbt;
     }
 
@@ -73,7 +77,17 @@ public class Coven {
         ListTag list = nbt.getList("members", 8);
         list.forEach(tag -> coven.addMember(UUID.fromString(tag.getAsString())));
         coven.covenLevel = nbt.getInt("covenLevel");
+        ListTag dedicantList = nbt.getList("dedicants", 10);
+        dedicantList.forEach(tag -> {
+            Dedicant dedicant = new Dedicant();
+            dedicant.deserializeNBT((CompoundTag) tag);
+            coven.dedicants.add(dedicant);
+        });
         return coven;
+    }
+
+    public void tick(ServerPlayer player) {
+        dedicants.forEach(dedicant -> dedicant.tick(player));
     }
 
     public int getCovenLevel() {
@@ -90,5 +104,13 @@ public class Coven {
 
     public void setRecruiting(boolean recruiting) {
         isRecruiting = recruiting;
+    }
+
+    public void addDedicant(Dedicant dedicant) {
+        dedicants.add(dedicant);
+    }
+
+    public void removeDedicant(Dedicant dedicant) {
+        dedicants.remove(dedicant);
     }
 }

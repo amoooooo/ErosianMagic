@@ -15,12 +15,14 @@ import com.cstav.genshinstrument.item.ModItems;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.*;
 import com.mojang.math.Axis;
+import dev.kosmx.playerAnim.minecraftApi.PlayerAnimationAccess;
 import elucent.eidolon.network.AttemptCastPacket;
 import elucent.eidolon.network.Networking;
 import elucent.eidolon.registries.EidolonSounds;
 import elucent.eidolon.registries.Registry;
 import elucent.eidolon.registries.Signs;
 import elucent.eidolon.util.KnowledgeUtil;
+import io.redspace.ironsspellbooks.api.magic.MagicData;
 import io.redspace.ironsspellbooks.api.registry.AttributeRegistry;
 import io.redspace.ironsspellbooks.entity.spells.magic_arrow.MagicArrowRenderer;
 import io.redspace.ironsspellbooks.player.ClientMagicData;
@@ -29,6 +31,7 @@ import net.minecraft.client.CameraType;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.player.AbstractClientPlayer;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.client.renderer.LightTexture;
 import net.minecraft.client.renderer.entity.NoopRenderer;
@@ -57,6 +60,7 @@ import net.minecraftforge.registries.RegistryObject;
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
 import org.lwjgl.glfw.GLFW;
+import yesman.epicfight.api.client.forgeevent.RenderEpicFightPlayerEvent;
 import yesman.epicfight.world.item.WeaponItem;
 
 import java.util.HashMap;
@@ -97,6 +101,15 @@ public class ErosianMagicClient {
     @Mod.EventBusSubscriber(modid = MODID, bus = Mod.EventBusSubscriber.Bus.FORGE, value = Dist.CLIENT)
     static
     class ErosianMagicClientForge {
+
+        @SubscribeEvent
+        public static void renderEpicFightPlayerEvent(RenderEpicFightPlayerEvent event) {
+            MagicData data = MagicData.getPlayerMagicData(event.getPlayerPatch().getOriginal());
+            if(data.getSyncedData().isCasting() || PlayerAnimationAccess.getPlayerAnimLayer((AbstractClientPlayer) event.getPlayerPatch().getOriginal()).isActive()) {
+                event.setShouldRender(false);
+            }
+
+        }
         static long lastTick = 0;
 
         private static final ResourceLocation DICE = new ResourceLocation("erosianmagic:textures/vfx/20_sided.png");

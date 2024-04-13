@@ -80,22 +80,27 @@ public class EldritchBlastSpell extends AbstractSpell {
     }
 
     public void onCast(Level level, int spellLevel, LivingEntity entity, CastSource source, MagicData playerMagicData) {
+        fireBlast(level, spellLevel, entity);
         int delay = this.getEffectiveCastTime(spellLevel, entity) * 5;
-        for(int i = 0; i < spellLevel; i++) {
+        for(int i = 0; i < spellLevel-1; i++) {
             DelayHandler.addDelay(i * delay, () -> {
-                Networking.sendToTracking(level, entity.blockPosition(), new ClientboundEldritchBlastPacket(entity.getUUID()));
-                HitResult hitResult = Utils.raycastForEntity(level, entity, getRange(spellLevel, entity), true, 0.15F);
-                level.addFreshEntity(new EldritchBlastVisualEntity(level, entity.position(), hitResult.getLocation(), entity));
-                if (hitResult.getType() == HitResult.Type.ENTITY) {
-                    Entity target = ((EntityHitResult)hitResult).getEntity();
-                    if (target instanceof LivingEntity) {
-                        DamageSources.applyDamage(target, this.getDamage(spellLevel, entity), this.getDamageSource(entity));
-                    }
-                }
-                MagicManager.spawnParticles(level, ParticleHelper.UNSTABLE_ENDER, hitResult.getLocation().x, hitResult.getLocation().y, hitResult.getLocation().z, 50, 0.0, 0.0, 0.0, 0.3, false);
+                fireBlast(level, spellLevel, entity);
             });
         }
         super.onCast(level, spellLevel, entity, source, playerMagicData);
+    }
+
+    private void fireBlast(Level level, int spellLevel, LivingEntity entity) {
+        Networking.sendToTracking(level, entity.blockPosition(), new ClientboundEldritchBlastPacket(entity.getUUID()));
+        HitResult hitResult = Utils.raycastForEntity(level, entity, getRange(spellLevel, entity), true, 0.15F);
+        level.addFreshEntity(new EldritchBlastVisualEntity(level, entity.position().add(0.0, 0.5, 0.0), hitResult.getLocation(), entity));
+        if (hitResult.getType() == HitResult.Type.ENTITY) {
+            Entity target = ((EntityHitResult)hitResult).getEntity();
+            if (target instanceof LivingEntity) {
+                DamageSources.applyDamage(target, this.getDamage(spellLevel, entity), this.getDamageSource(entity));
+            }
+        }
+        MagicManager.spawnParticles(level, ParticleHelper.UNSTABLE_ENDER, hitResult.getLocation().x, hitResult.getLocation().y, hitResult.getLocation().z, 50, 0.0, 0.0, 0.0, 0.3, false);
     }
 
     public static float getRange(int level, LivingEntity caster) {

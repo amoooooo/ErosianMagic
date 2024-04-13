@@ -1,5 +1,6 @@
 package aster.amo.erosianmagic.divine.witch;
 
+import aster.amo.erosianmagic.divine.IDivine;
 import aster.amo.erosianmagic.divine.witch.coven.Coven;
 import aster.amo.erosianmagic.util.IClass;
 import net.minecraft.core.Direction;
@@ -16,7 +17,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.List;
 import java.util.UUID;
 
-public interface IWitch extends IClass {
+public interface IWitch extends IDivine {
     Capability<IWitch> INSTANCE = CapabilityManager.get(new CapabilityToken<>() {});
     Coven getCoven();
     void setCoven(Coven coven);

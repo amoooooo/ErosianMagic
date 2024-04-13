@@ -8,6 +8,7 @@ import net.minecraftforge.common.util.INBTSerializable;
 
 public class Mage implements IMage, INBTSerializable<CompoundTag> {
     boolean chosenClass = false;
+    int level = 1;
     @Override
     public void setChosenClass(boolean isClass, Player player) {
         chosenClass = isClass;
@@ -26,14 +27,26 @@ public class Mage implements IMage, INBTSerializable<CompoundTag> {
     }
 
     @Override
+    public int getLevel() {
+        return level;
+    }
+
+    @Override
+    public void setLevel(int level) {
+        this.level = level;
+    }
+
+    @Override
     public CompoundTag serializeNBT() {
         CompoundTag nbt = new CompoundTag();
         nbt.putBoolean("chosenClass", chosenClass);
+        nbt.putInt("level", level);
         return nbt;
     }
 
     @Override
     public void deserializeNBT(CompoundTag nbt) {
         chosenClass = nbt.getBoolean("chosenClass");
+        level = nbt.getInt("level");
     }
 }

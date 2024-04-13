@@ -8,4 +8,8 @@ public class ClientClassUtils {
     public static boolean isOneOfClasses(String... classes) {
         return Arrays.stream(classes).anyMatch(r -> r.equals(ErosianMagicClient.CLASS));
     }
+
+    public static String getChosenClass() {
+        return ErosianMagicClient.CLASS;
+    }
 }

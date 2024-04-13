@@ -30,6 +30,7 @@ public abstract class ClientInputEventsMixin {
         }
         if((ClientClassUtils.isOneOfClasses("Witch", "Cleric") && button != KeyMappings.SPELL_WHEEL_KEYMAP.getKey().getValue())
                 || (ClientClassUtils.isOneOfClasses("Bard") && !(Minecraft.getInstance().player.getItemInHand(InteractionHand.MAIN_HAND).getItem() instanceof InstrumentItem))
+                || !ClientClassUtils.isOneOfClasses("Machinist", "Barbarian", "Paladin")
         ) {
             update();
             ci.cancel();

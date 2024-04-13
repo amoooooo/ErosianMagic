@@ -13,6 +13,7 @@ import net.minecraftforge.common.util.INBTSerializable;
 
 public class Fighter implements IFighter, INBTSerializable<CompoundTag> {
     private boolean chosenClass = false;
+    int level = 1;
     @Override
     public void setChosenClass(boolean isClass, Player player) {
         chosenClass = isClass;
@@ -38,17 +39,29 @@ public class Fighter implements IFighter, INBTSerializable<CompoundTag> {
     public CompoundTag serializeNBT() {
         CompoundTag nbt = new CompoundTag();
         nbt.putBoolean("chosenClass", chosenClass);
+        nbt.putInt("level", level);
         return nbt;
     }
 
     @Override
     public void deserializeNBT(CompoundTag nbt) {
         chosenClass = nbt.getBoolean("chosenClass");
+        level = nbt.getInt("level");
     }
 
     @Override
     public void onSetClass(Player player) {
         IFighter.super.onSetClass(player);
+    }
+
+    @Override
+    public int getLevel() {
+        return level;
+    }
+
+    @Override
+    public void setLevel(int level) {
+        this.level = level;
     }
 
     @Override

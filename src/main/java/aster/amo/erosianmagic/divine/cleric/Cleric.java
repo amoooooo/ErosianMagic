@@ -136,4 +136,19 @@ public class Cleric implements ICleric, INBTSerializable<CompoundTag> {
     public void sync(Player player) {
         if(!player.level().isClientSide()) Networking.sendToTracking(player.level(), player.blockPosition(), new ClericSyncPacket(serializeNBT(), player.getUUID()));
     }
+
+    @Override
+    public int getLevel() {
+        if (hasTemple()) {
+            return temple.getTempleLevel();
+        }
+        return 1;
+    }
+
+    @Override
+    public void setLevel(int level) {
+        if(hasTemple()) {
+            temple.setTempleLevel(level);
+        }
+    }
 }

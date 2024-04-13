@@ -1,6 +1,8 @@
 {
   "type": "eidolon:chant",
   "signs": [
-    "eidolon:wicked"
+    "eidolon:magic",
+    "eidolon:mind",
+    "eidolon:magic"
   ]
 }

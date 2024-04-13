@@ -1,0 +1,9 @@
+{
+  "type": "eidolon:chant",
+  "signs": [
+    "eidolon:winter",
+    "eidolon:sacred",
+    "eidolon:warding",
+    "eidolon:flame"
+  ]
+}

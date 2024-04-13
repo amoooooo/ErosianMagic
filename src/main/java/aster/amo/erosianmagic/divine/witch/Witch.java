@@ -16,6 +16,7 @@ import java.util.function.Supplier;
 public class Witch implements IWitch, INBTSerializable<CompoundTag> {
     boolean chosenClass = false;
     Coven coven = new Coven();
+    int level = 1;
     @Override
     public void setChosenClass(boolean isClass, Player player) {
         chosenClass = isClass;
@@ -38,10 +39,21 @@ public class Witch implements IWitch, INBTSerializable<CompoundTag> {
     }
 
     @Override
+    public int getLevel() {
+        return level;
+    }
+
+    @Override
+    public void setLevel(int level) {
+        this.level = level;
+    }
+
+    @Override
     public CompoundTag serializeNBT() {
         CompoundTag nbt = new CompoundTag();
         nbt.putBoolean("chosenClass", chosenClass);
         nbt.put("coven", coven.serializeNBT());
+        nbt.putInt("level", level);
         return nbt;
     }
 
@@ -49,6 +61,7 @@ public class Witch implements IWitch, INBTSerializable<CompoundTag> {
     public void deserializeNBT(CompoundTag nbt) {
         chosenClass = nbt.getBoolean("chosenClass");
         coven = Coven.deserializeNBT(nbt.getCompound("coven"));
+        level = nbt.getInt("level");
     }
 
     @Override

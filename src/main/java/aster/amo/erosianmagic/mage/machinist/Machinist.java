@@ -14,13 +14,12 @@ import java.util.function.Supplier;
 
 public class Machinist implements IMachinist, INBTSerializable<CompoundTag> {
     boolean chosenClass = false;
+    int level = 1;
     @Override
     public void setChosenClass(boolean isClass, Player player) {
         chosenClass = isClass;
         if(isClass) {
-            List<Supplier<AbstractSpell>> spells = ClassSpells.CLASS_SPELLS.get("Machinist");
             MagicData.getPlayerMagicData(player).getSyncedData().forgetAllSpells();
-//            spells.forEach(spell -> MagicData.getPlayerMagicData(player).getSyncedData().learnSpell(spell.get()));
         }
     }
 
@@ -36,14 +35,26 @@ public class Machinist implements IMachinist, INBTSerializable<CompoundTag> {
     }
 
     @Override
+    public int getLevel() {
+        return level;
+    }
+
+    @Override
+    public void setLevel(int level) {
+        this.level = level;
+    }
+
+    @Override
     public CompoundTag serializeNBT() {
         CompoundTag nbt = new CompoundTag();
         nbt.putBoolean("chosenClass", chosenClass);
+        nbt.putInt("level", level);
         return nbt;
     }
 
     @Override
     public void deserializeNBT(CompoundTag nbt) {
         chosenClass = nbt.getBoolean("chosenClass");
+        level = nbt.getInt("level");
     }
 }

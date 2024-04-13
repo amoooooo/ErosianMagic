@@ -21,6 +21,9 @@ public interface IBarbarian extends IFighter {
         return "Barbarian";
     }
 
+    int getLevel();
+    void setLevel(int level);
+
     class Provider implements ICapabilityProvider, INBTSerializable<CompoundTag> {
         final Barbarian impl = new Barbarian();
 

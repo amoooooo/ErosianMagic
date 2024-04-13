@@ -6,14 +6,17 @@
   "refmap": "erosianmagic.refmap.json",
   "mixins": [
     "AbstractSpellMixin",
-    "ActionStackMixin",
+    "AlembicDamageHandlerMixin",
+    "ApothEnchantmentMenuMixin",
+    "CombatHandlerMixin",
+    "EntityMixin",
     "TargetedAreaEntityMixin"
   ],
   "client": [
-    "client.CodexGuiAccessor",
-    "client.GuiMixin",
     "client.ChapterAccessor",
     "client.ClientInputEventsMixin",
+    "client.CodexGuiAccessor",
+    "client.GuiMixin",
     "client.IndexEntryAccessor",
     "client.LivingEntityRendererMixin"
   ],

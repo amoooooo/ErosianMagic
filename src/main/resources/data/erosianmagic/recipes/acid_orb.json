@@ -1,0 +1,10 @@
+{
+  "type": "eidolon:chant",
+  "signs": [
+    "eidolon:magic",
+    "eidolon:magic",
+    "eidolon:sacred",
+    "eidolon:flame",
+    "eidolon:flame"
+  ]
+}

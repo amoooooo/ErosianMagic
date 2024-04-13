@@ -18,6 +18,7 @@ import java.util.UUID;
 
 public class Barbarian implements IBarbarian, INBTSerializable<CompoundTag> {
     private boolean chosenClass = false;
+    private int level = 1;
     @Override
     public void setChosenClass(boolean isClass, Player player) {
         chosenClass = isClass;
@@ -34,6 +35,16 @@ public class Barbarian implements IBarbarian, INBTSerializable<CompoundTag> {
     }
 
     @Override
+    public int getLevel() {
+        return level;
+    }
+
+    @Override
+    public void setLevel(int level) {
+        this.level = level;
+    }
+
+    @Override
     public void sync(Player player) {
         if(!player.level().isClientSide()) {
             Networking.sendToTracking(player.level(), player.blockPosition(), new BarbarianSyncPacket(serializeNBT(), player.getUUID()));
@@ -45,12 +56,14 @@ public class Barbarian implements IBarbarian, INBTSerializable<CompoundTag> {
     public CompoundTag serializeNBT() {
         CompoundTag nbt = new CompoundTag();
         nbt.putBoolean("chosenClass", chosenClass);
+        nbt.putInt("level", level);
         return nbt;
     }
 
     @Override
     public void deserializeNBT(CompoundTag nbt) {
         chosenClass = nbt.getBoolean("chosenClass");
+        level = nbt.getInt("level");
     }
 
     public static final UUID removalUUID = UUID.fromString("f3f8f3f8-1f8f-1f8f-1f8f-1f8f1f8f1f8f");
@@ -59,11 +72,11 @@ public class Barbarian implements IBarbarian, INBTSerializable<CompoundTag> {
         IBarbarian.super.onSetClass(player);
         SyncedSpellData data = MagicData.getPlayerMagicData(player).getSyncedData();
         data.learnSpell(SpellRegistry.RAGE.get());
-//        CuriosApi.getCuriosHelper().getCuriosHandler(player).ifPresent(handler -> {
-//            handler.getStacksHandler("spellbook").ifPresent(stacks -> {
-//                stacks.addPermanentModifier(new AttributeModifier(removalUUID, "nobook", -1.0, AttributeModifier.Operation.ADDITION));
-//            });
-//        });
+        CuriosApi.getCuriosHelper().getCuriosHandler(player).ifPresent(handler -> {
+            handler.getStacksHandler("spellbook").ifPresent(stacks -> {
+                stacks.addPermanentModifier(new AttributeModifier(removalUUID, "nobook", -1.0, AttributeModifier.Operation.ADDITION));
+            });
+        });
     }
 
     @Override

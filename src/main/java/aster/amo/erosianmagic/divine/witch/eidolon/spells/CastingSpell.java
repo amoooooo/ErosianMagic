@@ -1,6 +1,11 @@
 package aster.amo.erosianmagic.divine.witch.eidolon.spells;
 
+import aster.amo.erosianmagic.ErosianMagic;
 import aster.amo.erosianmagic.registry.AttributeRegistry;
+import com.google.gson.Gson;
+import com.google.gson.JsonObject;
+import com.mojang.serialization.Codec;
+import com.mojang.serialization.JsonOps;
 import elucent.eidolon.api.altar.AltarInfo;
 import elucent.eidolon.api.deity.Deity;
 import elucent.eidolon.api.spells.Sign;
@@ -9,6 +14,7 @@ import elucent.eidolon.capability.ISoul;
 import elucent.eidolon.common.spell.StaticSpell;
 import elucent.eidolon.network.Networking;
 import elucent.eidolon.network.SoulUpdatePacket;
+import elucent.eidolon.recipe.ChantRecipe;
 import io.redspace.ironsspellbooks.api.spells.AbstractSpell;
 import io.redspace.ironsspellbooks.api.spells.CastSource;
 import net.minecraft.core.BlockPos;
@@ -22,6 +28,11 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.registries.RegistryObject;
+
+import java.io.File;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.Arrays;
 
 public class CastingSpell extends StaticSpell {
     final Deity deity;
@@ -62,7 +73,8 @@ public class CastingSpell extends StaticSpell {
                     float cost = (float) (1.0f/spell.get().getMaxLevel()) * 10.0f * signs.toArray().length * costModifier;
                     if(!soul.hasMagic() || soul.getMagic() < cost) return;
                     int spellLevel = getLevel(level, player, 1, this.spell.get());
-                    this.spell.get().attemptInitiateCast(player.getItemInHand(InteractionHand.MAIN_HAND), spellLevel, level, (ServerPlayer) player, CastSource.SCROLL, false, "custom");
+                    player.sendSystemMessage(Component.literal("Attempting to cast:" + this.spell.getId().toString()));
+                    this.spell.get().attemptInitiateCast(player.getItemInHand(InteractionHand.MAIN_HAND), spellLevel, level, (ServerPlayer) player, CastSource.SPELLBOOK, false, "custom");
                     level.getCapability(IReputation.INSTANCE, (Direction)null).ifPresent((rep) -> {
                         rep.pray(player, this.getRegistryName(), level.getGameTime());
                         rep.addReputation(player, this.deity.getId(), 0.1 + 0.25 * spellLevel);
@@ -76,7 +88,7 @@ public class CastingSpell extends StaticSpell {
     }
 
     protected int getLevel(Level level, Player player, int minLevel, AbstractSpell spell) {
-        AttributeInstance songPower = player.getAttribute(AttributeRegistry.SONG_POWER.get());
+        AttributeInstance songPower = player.getAttribute(AttributeRegistry.CHANT_POWER.get());
         if(songPower != null){
             int spellLevel = Math.max((int) Math.floor(songPower.getValue()), spell.getMinLevel());
             return spellLevel;

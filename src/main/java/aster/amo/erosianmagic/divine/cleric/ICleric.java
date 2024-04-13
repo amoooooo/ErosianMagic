@@ -1,5 +1,6 @@
 package aster.amo.erosianmagic.divine.cleric;
 
+import aster.amo.erosianmagic.divine.IDivine;
 import aster.amo.erosianmagic.divine.cleric.chapel.Temple;
 import aster.amo.erosianmagic.util.IClass;
 import net.minecraft.core.BlockPos;
@@ -17,7 +18,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.List;
 import java.util.UUID;
 
-public interface ICleric extends IClass {
+public interface ICleric extends IDivine {
     Capability<ICleric> INSTANCE = CapabilityManager.get(new CapabilityToken<>() {});
 
     class Provider implements ICapabilityProvider, INBTSerializable<CompoundTag> {

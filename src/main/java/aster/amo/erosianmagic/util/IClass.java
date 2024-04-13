@@ -9,4 +9,6 @@ public interface IClass {
     void sync(Player player);
     default void onSetOtherClass(Player player){}
     default void onSetClass(Player player){}
+    int getLevel();
+    void setLevel(int level);
 }
