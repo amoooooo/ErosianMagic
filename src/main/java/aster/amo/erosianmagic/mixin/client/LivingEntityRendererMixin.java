@@ -20,18 +20,18 @@ import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 
 @Mixin(LivingEntityRenderer.class)
 public class LivingEntityRendererMixin<T extends LivingEntity, M extends EntityModel<T>> {
-    @Inject(method = "getRenderType", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/renderer/entity/LivingEntityRenderer;getTextureLocation(Lnet/minecraft/world/entity/Entity;)Lnet/minecraft/resources/ResourceLocation;"), locals = LocalCapture.CAPTURE_FAILHARD, cancellable = true)
-    private void renderInvisPlayer(T entity, boolean p_115323_, boolean p_115324_, boolean p_115325_, CallbackInfoReturnable<RenderType> cir){
-        if (entity == Minecraft.getInstance().player && entity.hasEffect(MobEffects.INVISIBILITY)) {
-            ResourceLocation resourcelocation = ((LivingEntityRenderer<T, M>)(Object)this).getTextureLocation(entity);
-            cir.setReturnValue(RenderType.itemEntityTranslucentCull(resourcelocation));
-        }
-    }
-
-    @Inject(method = "isBodyVisible", at = @At("HEAD"), cancellable = true)
-    private void isBodyVisible(T entity, CallbackInfoReturnable<Boolean> cir){
-        if (entity == Minecraft.getInstance().player && entity.hasEffect(MobEffects.INVISIBILITY)) {
-            cir.setReturnValue(false);
-        }
-    }
+//    @Inject(method = "getRenderType", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/renderer/entity/LivingEntityRenderer;getTextureLocation(Lnet/minecraft/world/entity/Entity;)Lnet/minecraft/resources/ResourceLocation;"), locals = LocalCapture.CAPTURE_FAILHARD, cancellable = true)
+//    private void renderInvisPlayer(T entity, boolean p_115323_, boolean p_115324_, boolean p_115325_, CallbackInfoReturnable<RenderType> cir){
+//        if (entity == Minecraft.getInstance().player && entity.hasEffect(MobEffects.INVISIBILITY)) {
+//            ResourceLocation resourcelocation = ((LivingEntityRenderer<T, M>)(Object)this).getTextureLocation(entity);
+//            cir.setReturnValue(RenderType.itemEntityTranslucentCull(resourcelocation));
+//        }
+//    }
+//
+//    @Inject(method = "isBodyVisible", at = @At("HEAD"), cancellable = true)
+//    private void isBodyVisible(T entity, CallbackInfoReturnable<Boolean> cir){
+//        if (entity == Minecraft.getInstance().player && entity.hasEffect(MobEffects.INVISIBILITY)) {
+//            cir.setReturnValue(false);
+//        }
+//    }
 }

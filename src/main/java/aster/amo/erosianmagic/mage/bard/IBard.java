@@ -39,7 +39,6 @@ public interface IBard extends IMage {
     int getInspirationTime();
     void setInspirationTime(int time);
     boolean isInspiring();
-    void sync(Player player);
     void tick(Player player);
 
     @Override

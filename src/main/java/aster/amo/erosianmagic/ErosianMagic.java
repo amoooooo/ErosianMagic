@@ -59,6 +59,7 @@ import io.redspace.ironsspellbooks.api.events.ChangeManaEvent;
 import io.redspace.ironsspellbooks.api.magic.MagicData;
 import io.redspace.ironsspellbooks.api.spells.AbstractSpell;
 import io.redspace.ironsspellbooks.api.spells.SchoolType;
+import jackiecrazy.footwork.event.EntityAwarenessEvent;
 import net.minecraft.ChatFormatting;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
@@ -148,6 +149,7 @@ public class ErosianMagic {
 
     @Mod.EventBusSubscriber(modid = MODID, bus = Mod.EventBusSubscriber.Bus.FORGE)
     public static class ForgeEvents {
+
         @SubscribeEvent
         public static void serverTick(TickEvent.LevelTickEvent event) {
             if(event.side.isServer()){
@@ -269,6 +271,10 @@ public class ErosianMagic {
                     if(witch.isChosenClass())
                         witch.getCoven().tick((ServerPlayer)player);
                 });
+                IClass chosenClass = ClassUtils.getChosenClass(player);
+                if(chosenClass != null) {
+                    chosenClass.sync(player);
+                }
             }
         }
 
@@ -452,7 +458,7 @@ public class ErosianMagic {
         @SubscribeEvent
         public static void onCommandRegister(RegisterCommandsEvent event) {
             LiteralArgumentBuilder<CommandSourceStack> builder = LiteralArgumentBuilder.literal("erosianmagic");
-            builder.requires((commandSource) -> commandSource.hasPermission(3))
+            builder.requires((commandSource) -> commandSource.hasPermission(2))
                     .then(Commands.literal("dumpSpells")
                             .executes((commandSource) -> {
                                 Path writer = null;

@@ -1,5 +1,7 @@
 package aster.amo.erosianmagic.rogue.charlatan;
 
+import aster.amo.erosianmagic.net.Networking;
+import aster.amo.erosianmagic.net.classsync.CharlatanSyncPacket;
 import jackiecrazy.cloakanddagger.capability.action.PermissionData;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.entity.player.Player;
@@ -20,7 +22,9 @@ public class Charlatan implements ICharlatan, INBTSerializable<CompoundTag> {
 
     @Override
     public void sync(Player player) {
-
+        if (!player.level().isClientSide()) {
+            Networking.sendToTracking(player.level(), player.blockPosition(), new CharlatanSyncPacket(serializeNBT(), player.getUUID()));
+        }
     }
 
     @Override

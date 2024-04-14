@@ -26,16 +26,21 @@ public class Config
     private static final ForgeConfigSpec.BooleanValue DEBUG = BUILDER
             .comment("If true, enables debug mode")
             .define("debug", false);
+    private static final ForgeConfigSpec.BooleanValue FORCE_RENDER_OWN_NAMETAG = BUILDER
+            .comment("If true, forces rendering of your own nametag")
+            .define("forceRenderOwnNametag", true);
 
     static final ForgeConfigSpec SPEC = BUILDER.build();
 
     public static boolean autoThirdPerson;
     public static boolean debug;
+    public static boolean forceRenderOwnNametag;
 
     @SubscribeEvent
     static void onLoad(final ModConfigEvent event)
     {
         autoThirdPerson = AUTO_THIRD_PERSON.get();
         debug = DEBUG.get();
+        forceRenderOwnNametag = FORCE_RENDER_OWN_NAMETAG.get();
     }
 }

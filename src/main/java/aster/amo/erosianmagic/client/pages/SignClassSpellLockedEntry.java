@@ -22,7 +22,7 @@ public class SignClassSpellLockedEntry extends IndexPage.SignLockedEntry {
     @Override
     public boolean isUnlocked() {
         Player player = Eidolon.proxy.getPlayer();
-        boolean hasSpell = MagicData.getPlayerMagicData(player).getSyncedData().isSpellLearned(spell);
+        boolean hasSpell = true;
         boolean isClass = ClientClassUtils.isOneOfClasses(clazz);
         return super.isUnlocked() && hasSpell && isClass;
     }

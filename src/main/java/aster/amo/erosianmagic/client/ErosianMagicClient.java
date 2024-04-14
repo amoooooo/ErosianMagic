@@ -8,7 +8,9 @@ import aster.amo.erosianmagic.registry.EntityRegistry;
 import aster.amo.erosianmagic.rolls.IRoller;
 import aster.amo.erosianmagic.divine.witch.eidolon.BookRegistry;
 import aster.amo.erosianmagic.divine.witch.eidolon.QuickChant;
+import aster.amo.erosianmagic.util.ClassUtils;
 import aster.amo.erosianmagic.util.ClientClassUtils;
+import aster.amo.erosianmagic.util.IClass;
 import com.alrex.parcool.config.ParCoolConfig;
 import com.cstav.genshinstrument.item.InstrumentItem;
 import com.cstav.genshinstrument.item.ModItems;
@@ -53,6 +55,7 @@ import net.minecraftforge.client.gui.overlay.VanillaGuiOverlay;
 import net.minecraftforge.client.settings.KeyModifier;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.entity.player.ItemTooltipEvent;
+import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
@@ -113,9 +116,60 @@ public class ErosianMagicClient {
         static long lastTick = 0;
 
         private static final ResourceLocation DICE = new ResourceLocation("erosianmagic:textures/vfx/20_sided.png");
+        private static final Map<String, ResourceLocation> CLASS_ICONS = new HashMap<>();
+        static {
+            for(String s : ClassUtils.CLASSES.keySet()) {
+                if(!CLASS_ICONS.containsKey(s)) {
+                    CLASS_ICONS.put(s, new ResourceLocation("erosianmagic:textures/gui/class_icons/" + s.toLowerCase() + ".png"));
+                }
+            }
+
+        }
         @SubscribeEvent
         public static void onNametagRender(RenderNameTagEvent event){
             Entity entity = event.getEntity();
+            if(entity instanceof Player player) {
+                PoseStack ps = event.getPoseStack();
+                ps.pushPose();
+                IClass clazz = ClassUtils.getChosenClass(player);
+                String className = "Fighter";
+                if(clazz != null) {
+                    className = clazz.getClassName();
+                }
+                ResourceLocation icon = CLASS_ICONS.get(className);
+                ps.translate(0, event.getEntity().getBbHeight() + 0.5D + 0.5D, 0);
+                ps.mulPose(Minecraft.getInstance().getEntityRenderDispatcher().cameraOrientation());
+                ps.scale(-0.25F, -0.25F, 0.25F);
+                ps.translate(0, 0.5, 0);
+                ps.scale(0.75f, 0.75f, 0.75f);
+                Matrix4f matrix = ps.last().pose();
+                float size = 1F;
+                RenderSystem.disableBlend();
+                RenderSystem.enableDepthTest();
+                RenderSystem.defaultBlendFunc();
+                RenderSystem.setShader(GameRenderer::getPositionTexShader);
+                RenderSystem.setShaderTexture(0, icon);
+
+                Tesselator tessellator = Tesselator.getInstance();
+                BufferBuilder buffer = tessellator.getBuilder();
+                buffer.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_TEX_COLOR);
+                buffer.vertex(matrix, -size, -size, 0).uv(0, 0).color(255, 255, 255, 255).endVertex();
+                buffer.vertex(matrix, -size, size, 0).uv(0, 1).color(255, 255, 255, 255).endVertex();
+                buffer.vertex(matrix, size, size, 0).uv(1, 1).color(255, 255, 255, 255).endVertex();
+                buffer.vertex(matrix, size, -size, 0).uv(1, 0).color(255, 255, 255, 255).endVertex();
+                tessellator.end();
+                ps.translate(0.75, 0.0, -0.025f);
+                ps.scale(0.1F, 0.1F, 0.1F);
+                ps.translate(-Minecraft.getInstance().font.width(String.valueOf(clazz.getLevel()))/2F, -Minecraft.getInstance().font.lineHeight/2F, 0);
+                int roll = clazz.getLevel();
+                Component comp = Component.literal(String.valueOf(roll));
+                Minecraft.getInstance().font.drawInBatch8xOutline(comp.getVisualOrderText(), 0f, 0f, 0xFFFFFF, 0x000000, ps.last().pose(), event.getMultiBufferSource(), LightTexture.FULL_BRIGHT);
+                RenderSystem.disableBlend();
+                ps.popPose();
+                if(Config.forceRenderOwnNametag && player == Minecraft.getInstance().player) {
+                    event.setResult(Event.Result.ALLOW);
+                }
+            }
             if(entity instanceof LivingEntity livingEntity) {
                 livingEntity.getCapability(IRoller.INSTANCE).ifPresent(roller -> {
                     if(roller.shouldDisplayRoll()) {

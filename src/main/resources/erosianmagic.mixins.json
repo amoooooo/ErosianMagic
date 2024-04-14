@@ -6,6 +6,7 @@
   "refmap": "erosianmagic.refmap.json",
   "mixins": [
     "AbstractSpellMixin",
+    "AffixConvertLootModifierMixin",
     "AlembicDamageHandlerMixin",
     "ApothEnchantmentMenuMixin",
     "CombatHandlerMixin",
